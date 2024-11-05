@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NewsManagement2.EntityConsts
+namespace NewsManagement2.EntityConsts.RoleConsts
 {
     public static class RoleConst
     {
