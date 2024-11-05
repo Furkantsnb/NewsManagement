@@ -13,7 +13,7 @@ namespace NewsManagement2.Entities.Tags
         public Guid? TenantId { get; set; }
         public string TagName { get; set; }
 
-      //  public ICollection<ListableContentTag> ListableContentTags { get; set; }
+        public ICollection<ListableContentTag> ListableContentTags { get; set; }
 
 
         internal Tag()
