@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NewsManagement2.Entities.ListableContentRelations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
