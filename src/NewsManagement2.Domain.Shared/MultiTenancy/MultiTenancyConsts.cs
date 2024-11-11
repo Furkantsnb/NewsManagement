@@ -7,4 +7,9 @@ public static class MultiTenancyConsts
      * related modules and code parts, including this file.
      */
     public const bool IsEnabled = true;
+
+    public static string News = "NewsApp.News";
+    public static string Video = "NewsApp.Video";
+    public static string Gallery = "NewsApp.Gallery";
+    public static string ListableContent = "NewsApp.ListableContent";
 }
