@@ -7,6 +7,7 @@ using Volo.Abp.PermissionManagement;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.VirtualFileSystem;
+using EasyAbp.FileManagement;
 
 namespace NewsManagement2;
 
@@ -17,6 +18,7 @@ namespace NewsManagement2;
     typeof(AbpPermissionManagementHttpApiClientModule),
     typeof(AbpTenantManagementHttpApiClientModule),
     typeof(AbpFeatureManagementHttpApiClientModule),
+     typeof(FileManagementHttpApiClientModule),
     typeof(AbpSettingManagementHttpApiClientModule)
 )]
 public class NewsManagement2HttpApiClientModule : AbpModule

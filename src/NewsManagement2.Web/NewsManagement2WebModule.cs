@@ -37,6 +37,7 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
+using EasyAbp.FileManagement.Web;
 
 namespace NewsManagement2.Web;
 
@@ -51,6 +52,7 @@ namespace NewsManagement2.Web;
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpTenantManagementWebModule),
     typeof(AbpAspNetCoreSerilogModule),
+     typeof(FileManagementWebModule),
     typeof(AbpSwashbuckleModule)
     )]
 public class NewsManagement2WebModule : AbpModule

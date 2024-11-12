@@ -1,4 +1,5 @@
-﻿using Volo.Abp.Account;
+﻿using EasyAbp.FileManagement;
+using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
@@ -17,7 +18,8 @@ namespace NewsManagement2;
     typeof(AbpPermissionManagementApplicationModule),
     typeof(AbpTenantManagementApplicationModule),
     typeof(AbpFeatureManagementApplicationModule),
-    typeof(AbpSettingManagementApplicationModule)
+    typeof(AbpSettingManagementApplicationModule),
+    typeof(FileManagementApplicationModule)
     )]
 public class NewsManagement2ApplicationModule : AbpModule
 {

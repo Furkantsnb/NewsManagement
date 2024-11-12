@@ -1,4 +1,5 @@
-﻿using Localization.Resources.AbpUi;
+﻿using EasyAbp.FileManagement;
+using Localization.Resources.AbpUi;
 using NewsManagement2.Localization;
 using Volo.Abp.Account;
 using Volo.Abp.FeatureManagement;
@@ -18,6 +19,7 @@ namespace NewsManagement2;
     typeof(AbpPermissionManagementHttpApiModule),
     typeof(AbpTenantManagementHttpApiModule),
     typeof(AbpFeatureManagementHttpApiModule),
+    typeof(FileManagementHttpApiModule),
     typeof(AbpSettingManagementHttpApiModule)
     )]
 public class NewsManagement2HttpApiModule : AbpModule

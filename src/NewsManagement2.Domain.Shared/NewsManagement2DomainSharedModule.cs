@@ -1,4 +1,5 @@
-﻿using NewsManagement2.Localization;
+﻿using EasyAbp.FileManagement;
+using NewsManagement2.Localization;
 using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.FeatureManagement;
@@ -23,6 +24,7 @@ namespace NewsManagement2;
     typeof(AbpOpenIddictDomainSharedModule),
     typeof(AbpPermissionManagementDomainSharedModule),
     typeof(AbpSettingManagementDomainSharedModule),
+    typeof(FileManagementDomainSharedModule),
     typeof(AbpTenantManagementDomainSharedModule)    
     )]
 public class NewsManagement2DomainSharedModule : AbpModule

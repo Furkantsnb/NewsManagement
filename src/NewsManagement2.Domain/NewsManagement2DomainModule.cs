@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EasyAbp.FileManagement;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NewsManagement2.MultiTenancy;
 using Volo.Abp.AuditLogging;
@@ -28,7 +29,8 @@ namespace NewsManagement2;
     typeof(AbpPermissionManagementDomainIdentityModule),
     typeof(AbpSettingManagementDomainModule),
     typeof(AbpTenantManagementDomainModule),
-    typeof(AbpEmailingModule)
+    typeof(AbpEmailingModule),
+     typeof(FileManagementDomainModule)
 )]
 public class NewsManagement2DomainModule : AbpModule
 {
