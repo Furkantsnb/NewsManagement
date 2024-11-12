@@ -41,6 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\ModuleEkleme\ModuleEkleme\FileManagement\src\EasyAbp.FileManagement.Web\EasyAbp.FileManagement.Web.csproj" />
     <ProjectReference Include="..\NewsManagement2.Application\NewsManagement2.Application.csproj" />
     <ProjectReference Include="..\NewsManagement2.HttpApi\NewsManagement2.HttpApi.csproj" />
     <ProjectReference Include="..\NewsManagement2.EntityFrameworkCore\NewsManagement2.EntityFrameworkCore.csproj" />

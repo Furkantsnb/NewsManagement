@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\ModuleEkleme\ModuleEkleme\FileManagement\src\EasyAbp.FileManagement.EntityFrameworkCore\EasyAbp.FileManagement.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\NewsManagement2.Domain\NewsManagement2.Domain.csproj" />
     <PackageReference Include="Volo.Abp.EntityFrameworkCore.PostgreSql" Version="7.2.1" />
     <PackageReference Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" Version="7.2.1" />

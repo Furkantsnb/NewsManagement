@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\ModuleEkleme\ModuleEkleme\FileManagement\src\EasyAbp.FileManagement.Application\EasyAbp.FileManagement.Application.csproj" />
     <ProjectReference Include="..\NewsManagement2.Domain\NewsManagement2.Domain.csproj" />
     <ProjectReference Include="..\NewsManagement2.Application.Contracts\NewsManagement2.Application.Contracts.csproj" />
   </ItemGroup>

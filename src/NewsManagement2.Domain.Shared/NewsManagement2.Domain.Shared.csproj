@@ -29,4 +29,8 @@
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\ModuleEkleme\ModuleEkleme\FileManagement\src\EasyAbp.FileManagement.Domain.Shared\EasyAbp.FileManagement.Domain.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
