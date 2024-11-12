@@ -38,6 +38,12 @@ using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
 using EasyAbp.FileManagement.Web;
+using Volo.Abp.BlobStoring.Minio;
+using Volo.Abp.BlobStoring;
+using EasyAbp.FileManagement;
+using EasyAbp.FileManagement.Containers;
+using EasyAbp.FileManagement.Files;
+using EasyAbp.FileManagement.Options;
 
 namespace NewsManagement2.Web;
 
@@ -55,7 +61,8 @@ namespace NewsManagement2.Web;
      typeof(FileManagementWebModule),
     typeof(AbpSwashbuckleModule)
     )]
-public class NewsManagement2WebModule : AbpModule
+[DependsOn(typeof(AbpBlobStoringMinioModule))]
+    public class NewsManagement2WebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
@@ -92,9 +99,52 @@ public class NewsManagement2WebModule : AbpModule
         ConfigureBundles();
         ConfigureAutoMapper();
         ConfigureVirtualFileSystem(hostingEnvironment);
+        Configure<AbpBlobStoringOptions>(options =>
+        {
+            options.Containers.Configure<LocalFileSystemBlobContainer>(container =>
+            {
+                container.IsMultiTenant = true;
+                container.UseMinio(minio =>
+                {
+                    minio.EndPoint = "localhost:9000";
+                    minio.AccessKey = "E73pRFFqEERKYZe877yi";
+                    minio.SecretKey = "F13aoqjnqFGAE8srhnVy2pmb9T44OvDOrQPCtTOp";
+                    minio.BucketName = "furkan";
+
+                });
+            });
+        });
+        Configure<FileManagementOptions>(options =>
+        {
+            options.DefaultFileDownloadProviderType = typeof(LocalFileDownloadProvider);
+            options.Containers.Configure<CommonFileContainer>(container =>
+            {
+                // private container never be used by non-owner users (except user who has the "File.Manage" permission).
+                container.FileContainerType = FileContainerType.Public;
+                container.AbpBlobContainerName = BlobContainerNameAttribute.GetContainerName<LocalFileSystemBlobContainer>();
+                container.AbpBlobDirectorySeparator = "/";
+
+                container.RetainUnusedBlobs = false;
+                container.EnableAutoRename = true;
+
+                container.MaxByteSizeForEachFile = 5 * 1024 * 1024;
+                container.MaxByteSizeForEachUpload = 10 * 1024 * 1024;
+                container.MaxFileQuantityForEachUpload = 2;
+
+                container.AllowOnlyConfiguredFileExtensions = true;
+                container.FileExtensionsConfiguration.Add(".jpg", true);
+                container.FileExtensionsConfiguration.Add(".PNG", true);
+                // container.FileExtensionsConfiguration.Add(".tar.gz", true);
+                // container.FileExtensionsConfiguration.Add(".exe", false);
+
+                container.GetDownloadInfoTimesLimitEachUserPerMinute = 10;
+            });
+        });
+
         ConfigureNavigationServices();
         ConfigureAutoApiControllers();
         ConfigureSwaggerServices(context.Services);
+       
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
@@ -171,6 +221,7 @@ public class NewsManagement2WebModule : AbpModule
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "NewsManagement2 API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
                 options.CustomSchemaIds(type => type.FullName);
+                options.HideAbpEndpoints();
             }
         );
     }
