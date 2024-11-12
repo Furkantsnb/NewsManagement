@@ -107,9 +107,9 @@ namespace NewsManagement2.Web;
                 container.UseMinio(minio =>
                 {
                     minio.EndPoint = "localhost:9000";
-                    minio.AccessKey = "E73pRFFqEERKYZe877yi";
-                    minio.SecretKey = "F13aoqjnqFGAE8srhnVy2pmb9T44OvDOrQPCtTOp";
-                    minio.BucketName = "furkan";
+                    minio.AccessKey = "PNH9Ckkt6StJu6KULk9x";
+                    minio.SecretKey = "Rr8l7gZTfmuQIAYbYKQgWA6yryLXyyJstirOFSab";
+                    minio.BucketName = "news";
 
                 });
             });

@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace NewsManagement2.Migrations
 {
     [DbContext(typeof(NewsManagement2DbContext))]
-    [Migration("20241103155802_Initial")]
+    [Migration("20241112124533_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -26,6 +26,503 @@ namespace NewsManagement2.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("EasyAbp.FileManagement.Files.File", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BlobName")
+                        .HasColumnType("text");
+
+                    b.Property<long>("ByteSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("text")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("FileContainerName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("text");
+
+                    b.Property<int>("FileType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Flag")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Hash")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("MimeType")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("OwnerUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("SubFilesQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlobName");
+
+                    b.HasIndex("Hash");
+
+                    b.HasIndex("FileName", "OwnerUserId", "FileContainerName");
+
+                    b.HasIndex("ParentId", "OwnerUserId", "FileContainerName", "FileType");
+
+                    b.ToTable("EasyAbpFileManagementFiles", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Categories.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ColorCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("text")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<int?>("ParentCategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.Property<int>("listableContentType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppCategories", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Cities.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CityCode")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("text")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppCities", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Galleries.GalleryImage", b =>
+                {
+                    b.Property<int>("GalleryId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ImageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("NewsContent")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("GalleryId", "ImageId");
+
+                    b.ToTable("AppGalleryImages", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.ListableContentRelations.ListableContentCategory", b =>
+                {
+                    b.Property<int>("ListableContentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("ListableContentId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("AppListableContentCategories", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.ListableContentRelations.ListableContentCity", b =>
+                {
+                    b.Property<int>("ListableContentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("ListableContentId", "CityId");
+
+                    b.HasIndex("CityId");
+
+                    b.ToTable("AppListableContentCities", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.ListableContentRelations.ListableContentRelation", b =>
+                {
+                    b.Property<int>("ListableContentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RelatedListableContentId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("ListableContentId", "RelatedListableContentId");
+
+                    b.HasIndex("RelatedListableContentId");
+
+                    b.ToTable("AppListableContentRelations", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.ListableContentRelations.ListableContentTag", b =>
+                {
+                    b.Property<int>("ListableContentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("ListableContentId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("AppListableContentTags", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.ListableContents.ListableContent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("text")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<int>("ListableContentType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("PublishTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Spot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ViewsCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ListableContents");
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Newses.NewsDetailImage", b =>
+                {
+                    b.Property<int>("NewsId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("DetailImageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("NewsId", "DetailImageId");
+
+                    b.ToTable("AppNewsDetailImages", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Tags.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("text")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("TagName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppTags", (string)null);
+                });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
                 {
@@ -1679,6 +2176,134 @@ namespace NewsManagement2.Migrations
                     b.ToTable("AbpTenantConnectionStrings", (string)null);
                 });
 
+            modelBuilder.Entity("NewsManagement2.Entities.Galleries.Gallery", b =>
+                {
+                    b.HasBaseType("NewsManagement2.Entities.ListableContents.ListableContent");
+
+                    b.ToTable("AppGalleries", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Newses.News", b =>
+                {
+                    b.HasBaseType("NewsManagement2.Entities.ListableContents.ListableContent");
+
+                    b.ToTable("AppNewses", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Videos.Video", b =>
+                {
+                    b.HasBaseType("NewsManagement2.Entities.ListableContents.ListableContent");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("VideoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("VideoType")
+                        .HasColumnType("integer");
+
+                    b.ToTable("AppVideos", (string)null);
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Galleries.GalleryImage", b =>
+                {
+                    b.HasOne("NewsManagement2.Entities.Galleries.Gallery", "Gallery")
+                        .WithMany("GalleryImages")
+                        .HasForeignKey("GalleryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gallery");
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.ListableContentRelations.ListableContentCategory", b =>
+                {
+                    b.HasOne("NewsManagement2.Entities.Categories.Category", "Category")
+                        .WithMany("ListableContentCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NewsManagement2.Entities.ListableContents.ListableContent", "ListableContent")
+                        .WithMany("ListableContentCategories")
+                        .HasForeignKey("ListableContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("ListableContent");
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.ListableContentRelations.ListableContentCity", b =>
+                {
+                    b.HasOne("NewsManagement2.Entities.Cities.City", "City")
+                        .WithMany("ListableContentCities")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NewsManagement2.Entities.ListableContents.ListableContent", "ListableContent")
+                        .WithMany("ListableContentCities")
+                        .HasForeignKey("ListableContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("ListableContent");
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.ListableContentRelations.ListableContentRelation", b =>
+                {
+                    b.HasOne("NewsManagement2.Entities.ListableContents.ListableContent", "ListableContent")
+                        .WithMany("ListableContentRelations")
+                        .HasForeignKey("ListableContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NewsManagement2.Entities.ListableContents.ListableContent", "RelatedListableContent")
+                        .WithMany()
+                        .HasForeignKey("RelatedListableContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ListableContent");
+
+                    b.Navigation("RelatedListableContent");
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.ListableContentRelations.ListableContentTag", b =>
+                {
+                    b.HasOne("NewsManagement2.Entities.ListableContents.ListableContent", "ListableContent")
+                        .WithMany("ListableContentTags")
+                        .HasForeignKey("ListableContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NewsManagement2.Entities.Tags.Tag", "Tag")
+                        .WithMany("ListableContentTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ListableContent");
+
+                    b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Newses.NewsDetailImage", b =>
+                {
+                    b.HasOne("NewsManagement2.Entities.Newses.News", "News")
+                        .WithMany("DetailImageIds")
+                        .HasForeignKey("NewsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("News");
+                });
+
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
                 {
                     b.HasOne("Volo.Abp.AuditLogging.AuditLog", null)
@@ -1821,6 +2446,59 @@ namespace NewsManagement2.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("NewsManagement2.Entities.Galleries.Gallery", b =>
+                {
+                    b.HasOne("NewsManagement2.Entities.ListableContents.ListableContent", null)
+                        .WithOne()
+                        .HasForeignKey("NewsManagement2.Entities.Galleries.Gallery", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Newses.News", b =>
+                {
+                    b.HasOne("NewsManagement2.Entities.ListableContents.ListableContent", null)
+                        .WithOne()
+                        .HasForeignKey("NewsManagement2.Entities.Newses.News", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Videos.Video", b =>
+                {
+                    b.HasOne("NewsManagement2.Entities.ListableContents.ListableContent", null)
+                        .WithOne()
+                        .HasForeignKey("NewsManagement2.Entities.Videos.Video", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Categories.Category", b =>
+                {
+                    b.Navigation("ListableContentCategories");
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Cities.City", b =>
+                {
+                    b.Navigation("ListableContentCities");
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.ListableContents.ListableContent", b =>
+                {
+                    b.Navigation("ListableContentCategories");
+
+                    b.Navigation("ListableContentCities");
+
+                    b.Navigation("ListableContentRelations");
+
+                    b.Navigation("ListableContentTags");
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Tags.Tag", b =>
+                {
+                    b.Navigation("ListableContentTags");
+                });
+
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
                 {
                     b.Navigation("Actions");
@@ -1859,6 +2537,16 @@ namespace NewsManagement2.Migrations
             modelBuilder.Entity("Volo.Abp.TenantManagement.Tenant", b =>
                 {
                     b.Navigation("ConnectionStrings");
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Galleries.Gallery", b =>
+                {
+                    b.Navigation("GalleryImages");
+                });
+
+            modelBuilder.Entity("NewsManagement2.Entities.Newses.News", b =>
+                {
+                    b.Navigation("DetailImageIds");
                 });
 #pragma warning restore 612, 618
         }

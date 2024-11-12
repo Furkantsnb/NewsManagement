@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -371,6 +372,141 @@ namespace NewsManagement2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AppCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CategoryName = table.Column<string>(type: "text", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    ColorCode = table.Column<string>(type: "text", nullable: false),
+                    ParentCategoryId = table.Column<int>(type: "integer", nullable: true),
+                    listableContentType = table.Column<int>(type: "integer", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppCategories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppCities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CityName = table.Column<string>(type: "text", nullable: false),
+                    CityCode = table.Column<int>(type: "integer", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppCities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppTags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TagName = table.Column<string>(type: "text", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppTags", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EasyAbpFileManagementFiles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    FileContainerName = table.Column<string>(type: "text", nullable: true),
+                    FileName = table.Column<string>(type: "text", nullable: true),
+                    MimeType = table.Column<string>(type: "text", nullable: true),
+                    FileType = table.Column<int>(type: "integer", nullable: false),
+                    SubFilesQuantity = table.Column<int>(type: "integer", nullable: false),
+                    ByteSize = table.Column<long>(type: "bigint", nullable: false),
+                    Hash = table.Column<string>(type: "text", nullable: true),
+                    BlobName = table.Column<string>(type: "text", nullable: true),
+                    OwnerUserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Flag = table.Column<string>(type: "text", nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EasyAbpFileManagementFiles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ListableContents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Spot = table.Column<string>(type: "text", nullable: false),
+                    ImageId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ViewsCount = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    PublishTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    ListableContentType = table.Column<int>(type: "integer", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ListableContents", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OpenIddictApplications",
                 columns: table => new
                 {
@@ -663,6 +799,161 @@ namespace NewsManagement2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AppGalleries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppGalleries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppGalleries_ListableContents_Id",
+                        column: x => x.Id,
+                        principalTable: "ListableContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppListableContentCategories",
+                columns: table => new
+                {
+                    CategoryId = table.Column<int>(type: "integer", nullable: false),
+                    ListableContentId = table.Column<int>(type: "integer", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsPrimary = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppListableContentCategories", x => new { x.ListableContentId, x.CategoryId });
+                    table.ForeignKey(
+                        name: "FK_AppListableContentCategories_AppCategories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "AppCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppListableContentCategories_ListableContents_ListableConte~",
+                        column: x => x.ListableContentId,
+                        principalTable: "ListableContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppListableContentCities",
+                columns: table => new
+                {
+                    CityId = table.Column<int>(type: "integer", nullable: false),
+                    ListableContentId = table.Column<int>(type: "integer", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppListableContentCities", x => new { x.ListableContentId, x.CityId });
+                    table.ForeignKey(
+                        name: "FK_AppListableContentCities_AppCities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "AppCities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppListableContentCities_ListableContents_ListableContentId",
+                        column: x => x.ListableContentId,
+                        principalTable: "ListableContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppListableContentRelations",
+                columns: table => new
+                {
+                    ListableContentId = table.Column<int>(type: "integer", nullable: false),
+                    RelatedListableContentId = table.Column<int>(type: "integer", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppListableContentRelations", x => new { x.ListableContentId, x.RelatedListableContentId });
+                    table.ForeignKey(
+                        name: "FK_AppListableContentRelations_ListableContents_ListableConten~",
+                        column: x => x.ListableContentId,
+                        principalTable: "ListableContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppListableContentRelations_ListableContents_RelatedListabl~",
+                        column: x => x.RelatedListableContentId,
+                        principalTable: "ListableContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppListableContentTags",
+                columns: table => new
+                {
+                    TagId = table.Column<int>(type: "integer", nullable: false),
+                    ListableContentId = table.Column<int>(type: "integer", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppListableContentTags", x => new { x.ListableContentId, x.TagId });
+                    table.ForeignKey(
+                        name: "FK_AppListableContentTags_AppTags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "AppTags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppListableContentTags_ListableContents_ListableContentId",
+                        column: x => x.ListableContentId,
+                        principalTable: "ListableContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppNewses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppNewses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppNewses_ListableContents_Id",
+                        column: x => x.Id,
+                        principalTable: "ListableContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppVideos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    VideoType = table.Column<int>(type: "integer", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: true),
+                    VideoId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppVideos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppVideos_ListableContents_Id",
+                        column: x => x.Id,
+                        principalTable: "ListableContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OpenIddictAuthorizations",
                 columns: table => new
                 {
@@ -713,6 +1004,46 @@ namespace NewsManagement2.Migrations
                         name: "FK_AbpEntityPropertyChanges_AbpEntityChanges_EntityChangeId",
                         column: x => x.EntityChangeId,
                         principalTable: "AbpEntityChanges",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppGalleryImages",
+                columns: table => new
+                {
+                    ImageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GalleryId = table.Column<int>(type: "integer", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    NewsContent = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppGalleryImages", x => new { x.GalleryId, x.ImageId });
+                    table.ForeignKey(
+                        name: "FK_AppGalleryImages_AppGalleries_GalleryId",
+                        column: x => x.GalleryId,
+                        principalTable: "AppGalleries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppNewsDetailImages",
+                columns: table => new
+                {
+                    DetailImageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NewsId = table.Column<int>(type: "integer", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppNewsDetailImages", x => new { x.NewsId, x.DetailImageId });
+                    table.ForeignKey(
+                        name: "FK_AppNewsDetailImages_AppNewses_NewsId",
+                        column: x => x.NewsId,
+                        principalTable: "AppNewses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -947,6 +1278,46 @@ namespace NewsManagement2.Migrations
                 column: "UserName");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AppListableContentCategories_CategoryId",
+                table: "AppListableContentCategories",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppListableContentCities_CityId",
+                table: "AppListableContentCities",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppListableContentRelations_RelatedListableContentId",
+                table: "AppListableContentRelations",
+                column: "RelatedListableContentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppListableContentTags_TagId",
+                table: "AppListableContentTags",
+                column: "TagId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpFileManagementFiles_BlobName",
+                table: "EasyAbpFileManagementFiles",
+                column: "BlobName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpFileManagementFiles_FileName_OwnerUserId_FileContain~",
+                table: "EasyAbpFileManagementFiles",
+                columns: new[] { "FileName", "OwnerUserId", "FileContainerName" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpFileManagementFiles_Hash",
+                table: "EasyAbpFileManagementFiles",
+                column: "Hash");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EasyAbpFileManagementFiles_ParentId_OwnerUserId_FileContain~",
+                table: "EasyAbpFileManagementFiles",
+                columns: new[] { "ParentId", "OwnerUserId", "FileContainerName", "FileType" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OpenIddictApplications_ClientId",
                 table: "OpenIddictApplications",
                 column: "ClientId");
@@ -1047,6 +1418,30 @@ namespace NewsManagement2.Migrations
                 name: "AbpUserTokens");
 
             migrationBuilder.DropTable(
+                name: "AppGalleryImages");
+
+            migrationBuilder.DropTable(
+                name: "AppListableContentCategories");
+
+            migrationBuilder.DropTable(
+                name: "AppListableContentCities");
+
+            migrationBuilder.DropTable(
+                name: "AppListableContentRelations");
+
+            migrationBuilder.DropTable(
+                name: "AppListableContentTags");
+
+            migrationBuilder.DropTable(
+                name: "AppNewsDetailImages");
+
+            migrationBuilder.DropTable(
+                name: "AppVideos");
+
+            migrationBuilder.DropTable(
+                name: "EasyAbpFileManagementFiles");
+
+            migrationBuilder.DropTable(
                 name: "OpenIddictScopes");
 
             migrationBuilder.DropTable(
@@ -1068,10 +1463,28 @@ namespace NewsManagement2.Migrations
                 name: "AbpUsers");
 
             migrationBuilder.DropTable(
+                name: "AppGalleries");
+
+            migrationBuilder.DropTable(
+                name: "AppCategories");
+
+            migrationBuilder.DropTable(
+                name: "AppCities");
+
+            migrationBuilder.DropTable(
+                name: "AppTags");
+
+            migrationBuilder.DropTable(
+                name: "AppNewses");
+
+            migrationBuilder.DropTable(
                 name: "OpenIddictAuthorizations");
 
             migrationBuilder.DropTable(
                 name: "AbpAuditLogs");
+
+            migrationBuilder.DropTable(
+                name: "ListableContents");
 
             migrationBuilder.DropTable(
                 name: "OpenIddictApplications");

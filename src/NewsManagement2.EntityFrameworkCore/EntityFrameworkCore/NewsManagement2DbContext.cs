@@ -21,6 +21,7 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using EasyAbp.FileManagement.EntityFrameworkCore;
 
 namespace NewsManagement2.EntityFrameworkCore;
 
@@ -84,7 +85,7 @@ public class NewsManagement2DbContext :
         builder.ConfigureOpenIddict();
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
-       // builder.ConfigureFileManagement();
+        builder.ConfigureFileManagement();
         #region Gallery, Video, News
         builder.Entity<Gallery>(b =>
         {
