@@ -160,7 +160,78 @@ namespace NewsManagement2
 
         #endregion
 
-       
+        #region Roles
+        private async Task SeedRoleAsync(Guid? tenantId)
+        {
+
+            if (!await _identityRoleManager.RoleExistsAsync(RoleConst.Editor))
+            {
+                await _identityRoleManager.CreateAsync(
+                  new IdentityRole
+                  (
+                    _guidGenerator.Create(),
+                    RoleConst.Editor,
+                    tenantId: tenantId
+                  )
+                );
+
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Tags.Default, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Tags.Create, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Tags.Edit, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Tags.Delete, true);
+
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Cities.Default, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Cities.Create, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Cities.Edit, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Cities.Delete, true);
+
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Categories.Default, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Categories.Create, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Categories.Edit, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Categories.Delete, true);
+
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Videos.Default, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Videos.Create, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Videos.Edit, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Videos.Delete, true);
+
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Galleries.Default, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Galleries.Create, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Galleries.Edit, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Galleries.Delete, true);
+
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Newses.Default, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Newses.Create, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Newses.Edit, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Editor, NewsManagement2Permissions.Newses.Delete, true);
+
+            }
+
+            if (!await _identityRoleManager.RoleExistsAsync(RoleConst.Reporter))
+            {
+                await _identityRoleManager.CreateAsync(
+                  new IdentityRole
+                  (
+                    _guidGenerator.Create(),
+                    RoleConst.Reporter,
+                    tenantId: tenantId
+                  )
+                );
+
+                await _permissionManager.SetForRoleAsync(RoleConst.Reporter, NewsManagement2Permissions.Videos.Default, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Reporter, NewsManagement2Permissions.Videos.Create, true);
+
+                await _permissionManager.SetForRoleAsync(RoleConst.Reporter, NewsManagement2Permissions.Galleries.Default, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Reporter, NewsManagement2Permissions.Galleries.Create, true);
+
+                await _permissionManager.SetForRoleAsync(RoleConst.Reporter, NewsManagement2Permissions.Newses.Default, true);
+                await _permissionManager.SetForRoleAsync(RoleConst.Reporter, NewsManagement2Permissions.Newses.Create, true);
+
+            }
+
+        }
+
+        #endregion
 
     }
 }
