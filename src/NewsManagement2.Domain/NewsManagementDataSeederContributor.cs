@@ -7,6 +7,7 @@ using NewsManagement2.Entities.ListableContentRelations;
 using NewsManagement2.Entities.Newses;
 using NewsManagement2.Entities.Tags;
 using NewsManagement2.Entities.Videos;
+using NewsManagement2.EntityConsts.ListableContentConsts;
 using NewsManagement2.EntityConsts.RoleConsts;
 using NewsManagement2.MultiTenancy;
 using NewsManagement2.Permissions;
@@ -339,7 +340,131 @@ namespace NewsManagement2
         }
 
         #endregion
+        #region Categories
+        private async Task SeedCategoryAsync(Guid? tenantId)
+        {
+            if (await _categoryRepository.CountAsync() > 0)
+                return;
 
+            await _categoryRepository.InsertAsync(
+              new Category()
+              {
+                  CategoryName = "Yazılım",
+                  ColorCode = "#f9e79f",
+                  IsActive = true,
+                  ParentCategoryId = null,
+                  listableContentType = ListableContentType.Gallery,
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _categoryRepository.InsertAsync(
+              new Category()
+              {
+                  CategoryName = "Bilgisayar",
+                  ColorCode = "#148f77",
+                  IsActive = true,
+                  ParentCategoryId = null,
+                  listableContentType = ListableContentType.Video,
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _categoryRepository.InsertAsync(
+              new Category()
+              {
+                  CategoryName = "Eğitim",
+                  ColorCode = "#ec7063",
+                  IsActive = true,
+                  ParentCategoryId = null,
+                  listableContentType = ListableContentType.News,
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _categoryRepository.InsertAsync(
+              new Category()
+              {
+                  CategoryName = "Üniversite",
+                  ColorCode = "#ec7063",
+                  IsActive = true,
+                  ParentCategoryId = null,
+                  listableContentType = ListableContentType.News,
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _categoryRepository.InsertAsync(
+              new Category()
+              {
+                  CategoryName = "Haber",
+                  ColorCode = "#ec7063",
+                  IsActive = true,
+                  ParentCategoryId = null,
+                  listableContentType = ListableContentType.News,
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _categoryRepository.InsertAsync(
+              new Category()
+              {
+                  CategoryName = "Yazılım Mühendisi",
+                  ColorCode = "#ec70ff",
+                  IsActive = true,
+                  ParentCategoryId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Yazılım")).Id,
+                  listableContentType = ListableContentType.Gallery,
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _categoryRepository.InsertAsync(
+              new Category()
+              {
+                  CategoryName = "Bilgisayar Mühendisi",
+                  ColorCode = "#8c7063",
+                  IsActive = true,
+                  ParentCategoryId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Bilgisayar")).Id,
+                  listableContentType = ListableContentType.Gallery,
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _categoryRepository.InsertAsync(
+              new Category()
+              {
+                  CategoryName = "Eğitim Sistemi",
+                  ColorCode = "#7c0e63",
+                  IsActive = true,
+                  ParentCategoryId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Eğitim")).Id,
+                  listableContentType = ListableContentType.Video,
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _categoryRepository.InsertAsync(
+              new Category()
+              {
+                  CategoryName = "Kodlama",
+                  ColorCode = "#7a0e65",
+                  IsActive = true,
+                  ParentCategoryId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Yazılım")).Id,
+                  listableContentType = ListableContentType.Video,
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+        }
+        #endregion
         #region Cities
         private async Task SeedCityAsync(Guid? tenantId)
         {
