@@ -525,7 +525,6 @@ namespace NewsManagement2
 
         }
         #endregion
-
         #region Files
         private async Task SeedFileAsync(Guid? tenantId, Guid filesImageId, Guid uploadImageId)
         {
@@ -603,6 +602,295 @@ namespace NewsManagement2
 
         }
         #endregion
+        #region Newses
+
+        private async Task SeedNewsAsync(Guid? tenantId, Guid filesImageId, Guid uploadImageId)
+        {
+            if (await _newsRepository.CountAsync() > 0)
+                return;
+
+            // etiketler
+            var tagTatilId = (await _tagRepository.GetAsync(x => x.TagName == "Tatil")).Id;
+            var tagTeknolojiId = (await _tagRepository.GetAsync(x => x.TagName == "Teknoloji")).Id;
+            var tagHaberId = (await _tagRepository.GetAsync(x => x.TagName == "Haber")).Id;
+            var tagEgitimId = (await _tagRepository.GetAsync(x => x.TagName == "Eğitim")).Id;
+
+            //  şehirler
+            var cityBatmanId = (await _cityRepository.GetAsync(x => x.CityName == "Batman")).Id;
+            var cityElazigId = (await _cityRepository.GetAsync(x => x.CityName == "Elazığ")).Id;
+            var cityMalatyaId = (await _cityRepository.GetAsync(x => x.CityName == "Malatya")).Id;
+            var cityIstanbulId = (await _cityRepository.GetAsync(x => x.CityName == "İstanbul")).Id;
+            var cityDiyarbakirId = (await _cityRepository.GetAsync(x => x.CityName == "Diyarbakır")).Id;
+
+            //  kategoriler
+            var categorySoftwareId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Yazılım")).Id;
+            var categoryComputerId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Bilgisayar")).Id;
+            var categoryEducationId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Eğitim")).Id;
+            var categoryUniversityId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Üniversite")).Id;
+            var categoryNewsId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Haber")).Id;
+
+            var categoryCodingId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Kodlama")).Id;
+            var categoryEducationSystemId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Eğitim Sistemi")).Id;
+            var categoryComputerEngineeringId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Bilgisayar Mühendisi")).Id;
+            var categorySoftwareEngineeringId = (await _categoryRepository.GetAsync(c => c.CategoryName == "Yazılım Mühendisi")).Id;
+
+
+            #region News Haber 1
+
+            await _newsRepository.InsertAsync(
+                new News()
+                {
+                    Title = "News Haber 1",
+                    Spot = "News haber 1 içeriği",
+                    ImageId = filesImageId,
+                    TenantId = tenantId,
+                    Status = StatusType.Draft,
+                    PublishTime = null,
+                    ListableContentType = ListableContentType.News
+                },
+                autoSave: true
+            );
+
+            var news1Id = (await _newsRepository.GetAsync(x => x.Title == "News Haber 1")).Id;
+
+            await _newsDetailImageRepository.InsertManyAsync(
+                new List<NewsDetailImage>()
+                {
+        new() { NewsId = news1Id, DetailImageId = filesImageId, TenantId = tenantId },
+        new() { NewsId = news1Id, DetailImageId = uploadImageId, TenantId = tenantId }
+                }
+            );
+
+            await _listableContentTagRepository.InsertManyAsync(
+                new List<ListableContentTag>()
+                {
+        new() { ListableContentId = news1Id, TagId = tagTatilId, TenantId = tenantId },
+        new() { ListableContentId = news1Id, TagId = tagTeknolojiId, TenantId = tenantId },
+        new() { ListableContentId = news1Id, TagId = tagHaberId, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            await _listableContentCityRepository.InsertAsync(
+                new ListableContentCity()
+                {
+                    ListableContentId = news1Id,
+                    CityId = cityBatmanId,
+                    TenantId = tenantId
+                },
+                autoSave: true
+            );
+
+            await _listableContentCategoryRepository.InsertManyAsync(
+                new List<ListableContentCategory>()
+                {
+        new() { ListableContentId = news1Id, CategoryId = categorySoftwareId, IsPrimary = true, TenantId = tenantId },
+        new() { ListableContentId = news1Id, CategoryId = categoryEducationId, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            #endregion
+
+            #region News Haber 2
+
+            await _newsRepository.InsertAsync(
+                new News()
+                {
+                    Title = "News Haber 2",
+                    Spot = "News haber 2 içeriği",
+                    ImageId = uploadImageId,
+                    TenantId = tenantId,
+                    Status = StatusType.Published,
+                    PublishTime = DateTime.Now,
+                    ListableContentType = ListableContentType.News
+                },
+                autoSave: true
+            );
+
+            var news2Id = (await _newsRepository.GetAsync(x => x.Title == "News Haber 2")).Id;
+
+            await _newsDetailImageRepository.InsertManyAsync(
+                new List<NewsDetailImage>()
+                {
+        new() { NewsId = news2Id, DetailImageId = uploadImageId, TenantId = tenantId },
+        new() { NewsId = news2Id, DetailImageId = filesImageId, TenantId = tenantId }
+                }
+            );
+
+            await _listableContentTagRepository.InsertManyAsync(
+                new List<ListableContentTag>()
+                {
+        new() { ListableContentId = news2Id, TagId = tagEgitimId, TenantId = tenantId },
+        new() { ListableContentId = news2Id, TagId = tagTatilId, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            await _listableContentCityRepository.InsertManyAsync(
+                new List<ListableContentCity>()
+                {
+        new() { ListableContentId = news2Id, CityId = cityElazigId, TenantId = tenantId },
+        new() { ListableContentId = news2Id, CityId = cityDiyarbakirId, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            await _listableContentCategoryRepository.InsertManyAsync(
+                new List<ListableContentCategory>()
+                {
+        new() { ListableContentId = news2Id, CategoryId = categoryEducationSystemId, TenantId = tenantId },
+        new() { ListableContentId = news2Id, CategoryId = categoryUniversityId, IsPrimary = true, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            await _listableContentRelationRepository.InsertAsync(
+                new ListableContentRelation()
+                {
+                    ListableContentId = news2Id,
+                    RelatedListableContentId = news1Id,
+                    TenantId = tenantId
+                },
+                autoSave: true
+            );
+
+            #endregion
+
+            #region News Haber 3
+
+            await _newsRepository.InsertAsync(
+                new News()
+                {
+                    Title = "News Haber 3",
+                    Spot = "News Haber 3 içeriği",
+                    ImageId = uploadImageId,
+                    TenantId = tenantId,
+                    Status = StatusType.Published,
+                    PublishTime = DateTime.Now,
+                    ListableContentType = ListableContentType.News
+                },
+                autoSave: true
+            );
+
+            var news3Id = (await _newsRepository.GetAsync(x => x.Title == "News Haber 3")).Id;
+
+            await _newsDetailImageRepository.InsertManyAsync(
+                new List<NewsDetailImage>()
+                {
+        new() { NewsId = news3Id, DetailImageId = filesImageId, TenantId = tenantId },
+        new() { NewsId = news3Id, DetailImageId = uploadImageId, TenantId = tenantId }
+                }
+            );
+
+            await _listableContentTagRepository.InsertManyAsync(
+                new List<ListableContentTag>()
+                {
+        new() { ListableContentId = news3Id, TagId = tagTeknolojiId, TenantId = tenantId },
+        new() { ListableContentId = news3Id, TagId = tagHaberId, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            await _listableContentCityRepository.InsertManyAsync(
+                new List<ListableContentCity>()
+                {
+        new() { ListableContentId = news3Id, CityId = cityIstanbulId, TenantId = tenantId },
+        new() { ListableContentId = news3Id, CityId = cityMalatyaId, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            await _listableContentCategoryRepository.InsertManyAsync(
+                new List<ListableContentCategory>()
+                {
+        new() { ListableContentId = news3Id, CategoryId = categoryComputerEngineeringId, IsPrimary = true, TenantId = tenantId },
+        new() { ListableContentId = news3Id, CategoryId = categorySoftwareEngineeringId, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            await _listableContentRelationRepository.InsertManyAsync(
+                new List<ListableContentRelation>()
+                {
+        new() { ListableContentId = news3Id, RelatedListableContentId = news1Id, TenantId = tenantId },
+        new() { ListableContentId = news3Id, RelatedListableContentId = news2Id, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            #endregion
+
+            #region News Haber 4
+
+            await _newsRepository.InsertAsync(
+                new News()
+                {
+                    Title = "News Haber 4",
+                    Spot = "News Haber 4 içeriği",
+                    ImageId = filesImageId,
+                    TenantId = tenantId,
+                    Status = StatusType.Published,
+                    PublishTime = DateTime.Now,
+                    ListableContentType = ListableContentType.News
+                },
+                autoSave: true
+            );
+
+            var news4Id = (await _newsRepository.GetAsync(x => x.Title == "News Haber 4")).Id;
+
+            await _newsDetailImageRepository.InsertManyAsync(
+                new List<NewsDetailImage>()
+                {
+        new() { NewsId = news4Id, DetailImageId = uploadImageId, TenantId = tenantId },
+        new() { NewsId = news4Id, DetailImageId = filesImageId, TenantId = tenantId }
+                }
+            );
+
+            await _listableContentTagRepository.InsertManyAsync(
+                new List<ListableContentTag>()
+                {
+        new() { ListableContentId = news4Id, TagId = tagEgitimId, TenantId = tenantId },
+        new() { ListableContentId = news4Id, TagId = tagTatilId, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            await _listableContentCityRepository.InsertManyAsync(
+                new List<ListableContentCity>()
+                {
+        new() { ListableContentId = news4Id, CityId = cityBatmanId, TenantId = tenantId },
+        new() { ListableContentId = news4Id, CityId = cityDiyarbakirId, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            await _listableContentCategoryRepository.InsertManyAsync(
+                new List<ListableContentCategory>()
+                {
+        new() { ListableContentId = news4Id, CategoryId = categoryCodingId, IsPrimary = true, TenantId = tenantId },
+        new() { ListableContentId = news4Id, CategoryId = categoryUniversityId, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            await _listableContentRelationRepository.InsertManyAsync(
+                new List<ListableContentRelation>()
+                {
+        new() { ListableContentId = news4Id, RelatedListableContentId = news2Id, TenantId = tenantId },
+        new() { ListableContentId = news4Id, RelatedListableContentId = news3Id, TenantId = tenantId },
+        new() { ListableContentId = news4Id, RelatedListableContentId = news1Id, TenantId = tenantId }
+                },
+                autoSave: true
+            );
+
+            #endregion
+
+
+        }
+
+        #endregion
+
 
     }
 }
