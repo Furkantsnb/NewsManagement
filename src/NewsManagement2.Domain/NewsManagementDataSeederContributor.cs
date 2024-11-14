@@ -232,7 +232,50 @@ namespace NewsManagement2
         }
 
         #endregion
+        #region Tags
+        private async Task SeedTagAsync(Guid? tenantId)
+        {
+            if (await _tagRepository.CountAsync() > 0)
+                return;
 
+            await _tagRepository.InsertAsync(
+              new Tag()
+              {
+                  TagName = "Tatil",
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _tagRepository.InsertAsync(
+              new Tag()
+              {
+                  TagName = "Teknoloji",
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _tagRepository.InsertAsync(
+              new Tag()
+              {
+                  TagName = "Haber",
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+            await _tagRepository.InsertAsync(
+              new Tag()
+              {
+                  TagName = "Eğitim",
+                  TenantId = tenantId
+              },
+              autoSave: true
+            );
+
+        }
+        #endregion
         #region Users
 
         private async Task SeedUserAsync(Guid? tenantId)
