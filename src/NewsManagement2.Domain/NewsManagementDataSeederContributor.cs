@@ -1,5 +1,6 @@
 ﻿using EasyAbp.FileManagement.Files;
 using EasyAbp.FileManagement.Options.Containers;
+using Microsoft.AspNetCore.StaticFiles;
 using NewsManagement2.Entities.Categories;
 using NewsManagement2.Entities.Cities;
 using NewsManagement2.Entities.Galleries;
@@ -13,6 +14,7 @@ using NewsManagement2.MultiTenancy;
 using NewsManagement2.Permissions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,14 +76,14 @@ namespace NewsManagement2
             IRepository<ListableContentCategory> listableContentCategoryRepository,
             IRepository<ListableContentRelation> listableContentRelationRepository,
             IRepository<IdentityUser, Guid> userRepository,
-            IRepository<IdentityRole,Guid> roleRepository, IdentityUserManager identityUserManager,IdentityRoleManager identityRoleManager,
-            IPermissionManager permissionManager,TenantManager tenantManager,
+            IRepository<IdentityRole, Guid> roleRepository, IdentityUserManager identityUserManager, IdentityRoleManager identityRoleManager,
+            IPermissionManager permissionManager, TenantManager tenantManager,
             ITenantRepository tenantRepository,
             ICurrentTenant currentTenant,
             IFeatureManager featureManager,
-            IFeatureChecker featureChecker,FileManager fileManager,
+            IFeatureChecker featureChecker, FileManager fileManager,
             IFileRepository fileRepository,
-            IFileBlobNameGenerator fileBlobNameGenerator, 
+            IFileBlobNameGenerator fileBlobNameGenerator,
             IFileContentHashProvider fileContentHashProvider,
             IFileContainerConfigurationProvider configurationProvider)
         {
@@ -520,6 +522,84 @@ namespace NewsManagement2
               },
               autoSave: true
             );
+
+        }
+        #endregion
+
+        #region Files
+        private async Task SeedFileAsync(Guid? tenantId, Guid filesImageId, Guid uploadImageId)
+        {
+            if (await _fileRepository.CountAsync() > 0)
+                return;
+
+            var projectRoot = Directory.GetCurrentDirectory();
+            //if (tenantId == null)
+            projectRoot = Directory.GetParent(projectRoot).Parent.Parent.Parent.Parent.CreateSubdirectory("src\\NewsManagement2.Web").FullName;
+
+            var containerName = "default";
+            var typeProvider = new FileExtensionContentTypeProvider();
+
+            #region Files
+
+            var filesPath = Path.Combine(projectRoot, "wwwroot", "Files.png");
+            var filesName = Path.GetFileName(filesPath);
+            typeProvider.TryGetContentType(filesPath, out var filesMimeType);
+            var byteSizeOfFiles = System.IO.File.ReadAllBytes(filesPath);
+            var filesHashString = _fileContentHashProvider.GetHashString(byteSizeOfFiles);
+
+            var filesConfiguration = _configurationProvider.Get(containerName);
+            var filesBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, filesName, null, filesMimeType, filesConfiguration.AbpBlobDirectorySeparator);
+
+            var files = new EasyAbp.FileManagement.Files.File(
+              id: uploadImageId,
+              tenantId: tenantId,
+              parent: null,
+              fileContainerName: containerName,
+              fileName: filesName,
+              mimeType: filesMimeType,
+              fileType: FileType.RegularFile,
+              subFilesQuantity: 0,
+              byteSize: byteSizeOfFiles.Length,
+              hash: filesHashString,
+              blobName: filesBlobName,
+              ownerUserId: null
+            );
+
+            await _fileRepository.InsertAsync(files, autoSave: true);
+            await _fileManager.TrySaveBlobAsync(files, byteSizeOfFiles);
+
+            #endregion
+
+            #region Upload
+
+            var uploadPath = Path.Combine(projectRoot, "wwwroot", "Upload.png");
+            var uploadName = Path.GetFileName(uploadPath);
+            typeProvider.TryGetContentType(uploadPath, out var uploadMimeType);
+            var byteSizeOfUpload = System.IO.File.ReadAllBytes(uploadPath);
+            var uploadHashString = _fileContentHashProvider.GetHashString(byteSizeOfUpload);
+
+            var uploadConfiguration = _configurationProvider.Get(containerName);
+            var uploadBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, uploadName, null, uploadMimeType, uploadConfiguration.AbpBlobDirectorySeparator);
+
+            var upload = new EasyAbp.FileManagement.Files.File(
+              id: filesImageId,
+              tenantId: tenantId,
+              parent: null,
+              fileContainerName: containerName,
+              fileName: uploadName,
+              mimeType: uploadMimeType,
+              fileType: FileType.RegularFile,
+              subFilesQuantity: 0,
+              byteSize: byteSizeOfUpload.Length,
+              hash: uploadHashString,
+              blobName: uploadBlobName,
+              ownerUserId: null
+            );
+
+            await _fileRepository.InsertAsync(upload, autoSave: true);
+            await _fileManager.TrySaveBlobAsync(upload, byteSizeOfUpload);
+
+            #endregion
 
         }
         #endregion
