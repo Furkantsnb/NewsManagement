@@ -233,5 +233,70 @@ namespace NewsManagement2
 
         #endregion
 
+        #region Users
+
+        private async Task SeedUserAsync(Guid? tenantId)
+        {
+            if (!await _userRepository.AnyAsync(x => x.UserName == "Furkan"))
+            {
+                var userFurkan = new IdentityUser
+                  (
+                    _guidGenerator.Create(),
+                    "Furkan",
+                    "furkan@gmail.com",
+                    tenantId
+                  );
+
+                await _identityUserManager.CreateAsync(userFurkan, "1q2w3E*");
+                await _identityUserManager.SetRolesAsync(
+                  userFurkan, new List<string> { RoleConst.Editor }
+                );
+            }
+
+            if (!await _userRepository.AnyAsync(x => x.UserName == "Arif"))
+            {
+                var userArif = new IdentityUser
+                  (
+                    _guidGenerator.Create(),
+                    "Arif",
+                    "arif@gmail.com",
+                    tenantId
+                  );
+
+                await _identityUserManager.CreateAsync(userArif, "1q2w3E*");
+                await _identityUserManager.SetRolesAsync(userArif, new List<string> { RoleConst.Reporter });
+            }
+
+            if (!await _userRepository.AnyAsync(x => x.UserName == "Ahmet"))
+            {
+                var userAhmet = new IdentityUser
+                  (
+                    _guidGenerator.Create(),
+                    "Ahmet",
+                    "ahmet2@gmail.com",
+                    tenantId
+                  );
+
+                await _identityUserManager.CreateAsync(userAhmet, "1q2w3E*");
+                await _identityUserManager.SetRolesAsync(userAhmet, new List<string> { RoleConst.Reporter });
+            }
+
+            if (!await _userRepository.AnyAsync(x => x.UserName == "Danyal"))
+            {
+                var userDanyal = new IdentityUser
+                  (
+                    _guidGenerator.Create(),
+                    "Danyal",
+                    "danyal@gmail.com",
+                    tenantId
+                  );
+
+                await _identityUserManager.CreateAsync(userDanyal, "1q2w3E*");
+                await _identityUserManager.SetRolesAsync(userDanyal, new List<string> { RoleConst.Reporter });
+            }
+        }
+
+        #endregion
+
     }
 }
