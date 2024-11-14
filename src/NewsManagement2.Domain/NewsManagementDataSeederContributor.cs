@@ -339,6 +339,7 @@ namespace NewsManagement2
         }
 
         #endregion
+
         #region Cities
         private async Task SeedCityAsync(Guid? tenantId)
         {
