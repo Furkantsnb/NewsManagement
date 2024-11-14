@@ -159,7 +159,6 @@ namespace NewsManagement2
         //}
 
         #endregion
-
         #region Roles
         private async Task SeedRoleAsync(Guid? tenantId)
         {
@@ -339,6 +338,64 @@ namespace NewsManagement2
             }
         }
 
+        #endregion
+        #region Cities
+        private async Task SeedCityAsync(Guid? tenantId)
+        {
+            if (await _cityRepository.CountAsync() > 0)
+                return;
+
+            await _cityRepository.InsertAsync(
+              new City()
+              {
+                  TenantId = tenantId,
+                  CityName = "Antalya",
+                  CityCode = 07,
+              },
+              autoSave: true
+            );
+
+            await _cityRepository.InsertAsync(
+              new City()
+              {
+                  TenantId = tenantId,
+                  CityName = "Batman",
+                  CityCode = 72
+              },
+              autoSave: true
+            );
+
+            await _cityRepository.InsertAsync(
+              new City()
+              {
+                  TenantId = tenantId,
+                  CityName = "Elazığ",
+                  CityCode = 23
+              },
+              autoSave: true
+            );
+
+            await _cityRepository.InsertAsync(
+              new City()
+              {
+                  TenantId = tenantId,
+                  CityName = "Malatya",
+                  CityCode = 44
+              },
+              autoSave: true
+            );
+
+            await _cityRepository.InsertAsync(
+              new City()
+              {
+                  TenantId = tenantId,
+                  CityName = "Diyarbakır",
+                  CityCode = 21
+              },
+              autoSave: true
+            );
+
+        }
         #endregion
 
     }
