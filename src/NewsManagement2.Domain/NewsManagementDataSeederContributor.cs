@@ -557,7 +557,7 @@ namespace NewsManagement2
 
             #region Files
 
-            var filesPath = Path.Combine(projectRoot, "wwwroot", "Files.png");
+            var filesPath = Path.Combine(projectRoot, "wwwroot", "dosya.jpg");
             var filesName = Path.GetFileName(filesPath);
             typeProvider.TryGetContentType(filesPath, out var filesMimeType);
             var byteSizeOfFiles = System.IO.File.ReadAllBytes(filesPath);
@@ -588,7 +588,7 @@ namespace NewsManagement2
 
             #region Upload
 
-            var uploadPath = Path.Combine(projectRoot, "wwwroot", "Upload.png");
+            var uploadPath = Path.Combine(projectRoot, "wwwroot", "upload.jpg");
             var uploadName = Path.GetFileName(uploadPath);
             typeProvider.TryGetContentType(uploadPath, out var uploadMimeType);
             var byteSizeOfUpload = System.IO.File.ReadAllBytes(uploadPath);
