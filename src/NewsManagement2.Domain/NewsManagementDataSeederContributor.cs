@@ -118,49 +118,65 @@ namespace NewsManagement2
             _configurationProvider = configurationProvider;
         }
 
-        public Task SeedAsync(DataSeedContext context)
+        public async Task SeedAsync(DataSeedContext context)
         {
-            throw new NotImplementedException();
+            await SeedTenantAsync();
         }
 
         #region Tenants
-        //private async Task SeedTenantAsync()
-        //{
+        private async Task SeedTenantAsync()
+        {
 
-        //    if (await _tenantRepository.FindByNameAsync(NewsManagement2Consts.ChildTenanName) == null)
-        //    {
-        //        var childTenant = await _tenantManager.CreateAsync(NewsManagement2Consts.ChildTenanName);
-        //        await _tenantRepository.InsertAsync(childTenant);
+            if (await _tenantRepository.FindByNameAsync(NewsManagement2Consts.ChildTenanName) == null)
+            {
+                var childTenant = await _tenantManager.CreateAsync(NewsManagement2Consts.ChildTenanName);
+                await _tenantRepository.InsertAsync(childTenant);
 
-        //        using (_currentTenant.Change(childTenant.Id))
-        //        {
-        //            await _featureManager.SetForTenantAsync(childTenant.Id, MultiTenancyConsts.Gallery, true.ToString());
+                using (_currentTenant.Change(childTenant.Id))
+                {
+                    await _featureManager.SetForTenantAsync(childTenant.Id, MultiTenancyConsts.Gallery, true.ToString());
 
-        //            var filesImageId = NewsManagement2Consts.ChildTenanFilesImageId;
-        //            var uploadImageId = NewsManagement2Consts.ChildTenanUploadImageId;
+                    var filesImageId = NewsManagement2Consts.ChildTenanFilesImageId;
+                    var uploadImageId = NewsManagement2Consts.ChildTenanUploadImageId;
 
+                    await SeedRoleAsync(childTenant.Id);
+                    await SeedUserAsync(childTenant.Id);
+                    await SeedTagAsync(childTenant.Id);
+                    await SeedCityAsync(childTenant.Id);
+                    await SeedCategoryAsync(childTenant.Id);
+                    await SeedFileAsync(childTenant.Id, filesImageId, uploadImageId);
+                    await SeedNewsAsync(childTenant.Id, filesImageId, uploadImageId);
+                    await SeedVideoAsync(childTenant.Id, filesImageId, uploadImageId);
+                    await SeedGalleryAsync(childTenant.Id, filesImageId, uploadImageId);
+                }
 
-        //        }
+            }
 
-        //    }
+            if (await _tenantRepository.FindByNameAsync(NewsManagement2Consts.YoungTenanName) == null)
+            {
+                var youngTenant = await _tenantManager.CreateAsync(NewsManagement2Consts.YoungTenanName);
+                await _tenantRepository.InsertAsync(youngTenant);
 
-        //    if (await _tenantRepository.FindByNameAsync(NewsManagement2Consts.YoungTenanName) == null)
-        //    {
-        //        var youngTenant = await _tenantManager.CreateAsync(NewsManagement2Consts.YoungTenanName);
-        //        await _tenantRepository.InsertAsync(youngTenant);
+                using (_currentTenant.Change(youngTenant.Id))
+                {
+                    await _featureManager.SetForTenantAsync(youngTenant.Id, MultiTenancyConsts.Video, true.ToString());
 
-        //        using (_currentTenant.Change(youngTenant.Id))
-        //        {
-        //            await _featureManager.SetForTenantAsync(youngTenant.Id, MultiTenancyConsts.Video, true.ToString());
+                    var filesImageId = NewsManagement2Consts.YoungTenanFilesImageId;
+                    var uploadImageId = NewsManagement2Consts.YoungTenanUploadImageId;
 
-        //            var filesImageId = NewsManagement2Consts.YoungTenanFilesImageId;
-        //            var uploadImageId = NewsManagement2Consts.YoungTenanUploadImageId;
+                    await SeedRoleAsync(youngTenant.Id);
+                    await SeedUserAsync(youngTenant.Id);
+                    await SeedTagAsync(youngTenant.Id);
+                    await SeedCityAsync(youngTenant.Id);
+                    await SeedCategoryAsync(youngTenant.Id);
+                    await SeedFileAsync(youngTenant.Id, filesImageId, uploadImageId);
+                    await SeedNewsAsync(youngTenant.Id, filesImageId, uploadImageId);
+                    await SeedVideoAsync(youngTenant.Id, filesImageId, uploadImageId);
+                    await SeedGalleryAsync(youngTenant.Id, filesImageId, uploadImageId);
+                }
 
-
-        //        }
-
-        //    }
-        //}
+            }
+        }
 
         #endregion
         #region Roles
