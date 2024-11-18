@@ -5,7 +5,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace NewsManagement2.EntityDtos.CityDtos
 {
-    public class UpdateCityDto : EntityDto
+    public class CreateCityDto : EntityDto
     {
         public string CityName { get; set; }
         public int CityCode { get; set; }
