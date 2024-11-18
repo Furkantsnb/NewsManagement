@@ -549,7 +549,6 @@ namespace NewsManagement2
                 return;
 
             var projectRoot = Directory.GetCurrentDirectory();
-            //if (tenantId == null)
             projectRoot = Directory.GetParent(projectRoot).Parent.Parent.Parent.Parent.CreateSubdirectory("src\\NewsManagement2.Web").FullName;
 
             var containerName = "default";
@@ -558,27 +557,37 @@ namespace NewsManagement2
             #region Files
 
             var filesPath = Path.Combine(projectRoot, "wwwroot", "dosya.jpg");
+            if (!System.IO.File.Exists(filesPath))
+            {
+                throw new FileNotFoundException($"File not found: {filesPath}");
+            }
+
             var filesName = Path.GetFileName(filesPath);
             typeProvider.TryGetContentType(filesPath, out var filesMimeType);
             var byteSizeOfFiles = System.IO.File.ReadAllBytes(filesPath);
             var filesHashString = _fileContentHashProvider.GetHashString(byteSizeOfFiles);
 
             var filesConfiguration = _configurationProvider.Get(containerName);
+            if (filesConfiguration == null)
+            {
+                throw new Exception($"File container configuration for '{containerName}' was not found. Please configure it in the module.");
+            }
+
             var filesBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, filesName, null, filesMimeType, filesConfiguration.AbpBlobDirectorySeparator);
 
             var files = new EasyAbp.FileManagement.Files.File(
-              id: uploadImageId,
-              tenantId: tenantId,
-              parent: null,
-              fileContainerName: containerName,
-              fileName: filesName,
-              mimeType: filesMimeType,
-              fileType: FileType.RegularFile,
-              subFilesQuantity: 0,
-              byteSize: byteSizeOfFiles.Length,
-              hash: filesHashString,
-              blobName: filesBlobName,
-              ownerUserId: null
+                id: uploadImageId,
+                tenantId: tenantId,
+                parent: null,
+                fileContainerName: containerName,
+                fileName: filesName,
+                mimeType: filesMimeType,
+                fileType: FileType.RegularFile,
+                subFilesQuantity: 0,
+                byteSize: byteSizeOfFiles.Length,
+                hash: filesHashString,
+                blobName: filesBlobName,
+                ownerUserId: null
             );
 
             await _fileRepository.InsertAsync(files, autoSave: true);
@@ -589,34 +598,43 @@ namespace NewsManagement2
             #region Upload
 
             var uploadPath = Path.Combine(projectRoot, "wwwroot", "upload.jpg");
+            if (!System.IO.File.Exists(uploadPath))
+            {
+                throw new FileNotFoundException($"File not found: {uploadPath}");
+            }
+
             var uploadName = Path.GetFileName(uploadPath);
             typeProvider.TryGetContentType(uploadPath, out var uploadMimeType);
             var byteSizeOfUpload = System.IO.File.ReadAllBytes(uploadPath);
             var uploadHashString = _fileContentHashProvider.GetHashString(byteSizeOfUpload);
 
             var uploadConfiguration = _configurationProvider.Get(containerName);
+            if (uploadConfiguration == null)
+            {
+                throw new Exception($"File container configuration for '{containerName}' was not found. Please configure it in the module.");
+            }
+
             var uploadBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, uploadName, null, uploadMimeType, uploadConfiguration.AbpBlobDirectorySeparator);
 
             var upload = new EasyAbp.FileManagement.Files.File(
-              id: filesImageId,
-              tenantId: tenantId,
-              parent: null,
-              fileContainerName: containerName,
-              fileName: uploadName,
-              mimeType: uploadMimeType,
-              fileType: FileType.RegularFile,
-              subFilesQuantity: 0,
-              byteSize: byteSizeOfUpload.Length,
-              hash: uploadHashString,
-              blobName: uploadBlobName,
-              ownerUserId: null
+                id: filesImageId,
+                tenantId: tenantId,
+                parent: null,
+                fileContainerName: containerName,
+                fileName: uploadName,
+                mimeType: uploadMimeType,
+                fileType: FileType.RegularFile,
+                subFilesQuantity: 0,
+                byteSize: byteSizeOfUpload.Length,
+                hash: uploadHashString,
+                blobName: uploadBlobName,
+                ownerUserId: null
             );
 
             await _fileRepository.InsertAsync(upload, autoSave: true);
             await _fileManager.TrySaveBlobAsync(upload, byteSizeOfUpload);
 
             #endregion
-
         }
         #endregion
         #region Newses
