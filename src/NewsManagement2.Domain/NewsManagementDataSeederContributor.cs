@@ -144,7 +144,7 @@ namespace NewsManagement2
                     await SeedTagAsync(childTenant.Id);
                     await SeedCityAsync(childTenant.Id);
                     await SeedCategoryAsync(childTenant.Id);
-                    await SeedFileAsync(childTenant.Id, filesImageId, uploadImageId);
+                  //  await SeedFileAsync(childTenant.Id, filesImageId, uploadImageId);
                     await SeedNewsAsync(childTenant.Id, filesImageId, uploadImageId);
                     await SeedVideoAsync(childTenant.Id, filesImageId, uploadImageId);
                     await SeedGalleryAsync(childTenant.Id, filesImageId, uploadImageId);
@@ -169,7 +169,7 @@ namespace NewsManagement2
                     await SeedTagAsync(youngTenant.Id);
                     await SeedCityAsync(youngTenant.Id);
                     await SeedCategoryAsync(youngTenant.Id);
-                    await SeedFileAsync(youngTenant.Id, filesImageId, uploadImageId);
+                   // await SeedFileAsync(youngTenant.Id, filesImageId, uploadImageId);
                     await SeedNewsAsync(youngTenant.Id, filesImageId, uploadImageId);
                     await SeedVideoAsync(youngTenant.Id, filesImageId, uploadImageId);
                     await SeedGalleryAsync(youngTenant.Id, filesImageId, uploadImageId);
@@ -494,8 +494,8 @@ namespace NewsManagement2
               new City()
               {
                   TenantId = tenantId,
-                  CityName = "Antalya",
-                  CityCode = 07,
+                  CityName = "İstanbul",
+                  CityCode = 34,
               },
               autoSave: true
             );
@@ -542,101 +542,84 @@ namespace NewsManagement2
 
         }
         #endregion
-        #region Files
-        private async Task SeedFileAsync(Guid? tenantId, Guid filesImageId, Guid uploadImageId)
-        {
-            if (await _fileRepository.CountAsync() > 0)
-                return;
+        //#region Files
+        //private async Task SeedFileAsync(Guid? tenantId, Guid filesImageId, Guid uploadImageId)
+        //{
+        //    if (await _fileRepository.CountAsync() > 0)
+        //        return;
 
-            var projectRoot = Directory.GetCurrentDirectory();
-            projectRoot = Directory.GetParent(projectRoot).Parent.Parent.Parent.Parent.CreateSubdirectory("src\\NewsManagement2.Web").FullName;
+        //    var projectRoot = Directory.GetCurrentDirectory();
+        //    //if (tenantId == null)
+        //    projectRoot = Directory.GetParent(projectRoot).Parent.Parent.Parent.Parent.CreateSubdirectory("src\\NewsManagement2.Web").FullName;
 
-            var containerName = "default";
-            var typeProvider = new FileExtensionContentTypeProvider();
+        //    var containerName = "default";
+        //    var typeProvider = new FileExtensionContentTypeProvider();
 
-            #region Files
+        //    #region Files
 
-            var filesPath = Path.Combine(projectRoot, "wwwroot", "dosya.jpg");
-            if (!System.IO.File.Exists(filesPath))
-            {
-                throw new FileNotFoundException($"File not found: {filesPath}");
-            }
+        //    var filesPath = Path.Combine(projectRoot, "wwwroot", "dosya.jpg");
+        //    var filesName = Path.GetFileName(filesPath);
+        //    typeProvider.TryGetContentType(filesPath, out var filesMimeType);
+        //    //C:\Users\furka\Desktop\ABP\NewsManagement2\src\NewsManagement2.Web\wwwroot\dosya.jpg
+        //    var byteSizeOfFiles = System.IO.File.ReadAllBytes(filesPath);
+        //    var filesHashString = _fileContentHashProvider.GetHashString(byteSizeOfFiles);
 
-            var filesName = Path.GetFileName(filesPath);
-            typeProvider.TryGetContentType(filesPath, out var filesMimeType);
-            var byteSizeOfFiles = System.IO.File.ReadAllBytes(filesPath);
-            var filesHashString = _fileContentHashProvider.GetHashString(byteSizeOfFiles);
+        //    var filesConfiguration = _configurationProvider.Get(containerName);
+        //    var filesBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, filesName, null, filesMimeType, filesConfiguration.AbpBlobDirectorySeparator);
 
-            var filesConfiguration = _configurationProvider.Get(containerName);
-            if (filesConfiguration == null)
-            {
-                throw new Exception($"File container configuration for '{containerName}' was not found. Please configure it in the module.");
-            }
+        //    var files = new EasyAbp.FileManagement.Files.File(
+        //      id: uploadImageId,
+        //      tenantId: tenantId,
+        //      parent: null,
+        //      fileContainerName: containerName,
+        //      fileName: filesName,
+        //      mimeType: filesMimeType,
+        //      fileType: FileType.RegularFile,
+        //      subFilesQuantity: 0,
+        //      byteSize: byteSizeOfFiles.Length,
+        //      hash: filesHashString,
+        //      blobName: filesBlobName,
+        //      ownerUserId: null
+        //    );
 
-            var filesBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, filesName, null, filesMimeType, filesConfiguration.AbpBlobDirectorySeparator);
+        //    await _fileRepository.InsertAsync(files, autoSave: true);
+        //    await _fileManager.TrySaveBlobAsync(files, byteSizeOfFiles);
 
-            var files = new EasyAbp.FileManagement.Files.File(
-                id: uploadImageId,
-                tenantId: tenantId,
-                parent: null,
-                fileContainerName: containerName,
-                fileName: filesName,
-                mimeType: filesMimeType,
-                fileType: FileType.RegularFile,
-                subFilesQuantity: 0,
-                byteSize: byteSizeOfFiles.Length,
-                hash: filesHashString,
-                blobName: filesBlobName,
-                ownerUserId: null
-            );
+        //    #endregion
 
-            await _fileRepository.InsertAsync(files, autoSave: true);
-            await _fileManager.TrySaveBlobAsync(files, byteSizeOfFiles);
+        //    #region Upload
 
-            #endregion
+        //    var uploadPath = Path.Combine(projectRoot, "wwwroot", "upload.jpg");
+        //    var uploadName = Path.GetFileName(uploadPath);
+        //    typeProvider.TryGetContentType(uploadPath, out var uploadMimeType);
+        //    var byteSizeOfUpload = System.IO.File.ReadAllBytes(uploadPath);
+        //    var uploadHashString = _fileContentHashProvider.GetHashString(byteSizeOfUpload);
 
-            #region Upload
+        //    var uploadConfiguration = _configurationProvider.Get(containerName);
+        //    var uploadBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, uploadName, null, uploadMimeType, uploadConfiguration.AbpBlobDirectorySeparator);
 
-            var uploadPath = Path.Combine(projectRoot, "wwwroot", "upload.jpg");
-            if (!System.IO.File.Exists(uploadPath))
-            {
-                throw new FileNotFoundException($"File not found: {uploadPath}");
-            }
+        //    var upload = new EasyAbp.FileManagement.Files.File(
+        //      id: filesImageId,
+        //      tenantId: tenantId,
+        //      parent: null,
+        //      fileContainerName: containerName,
+        //      fileName: uploadName,
+        //      mimeType: uploadMimeType,
+        //      fileType: FileType.RegularFile,
+        //      subFilesQuantity: 0,
+        //      byteSize: byteSizeOfUpload.Length,
+        //      hash: uploadHashString,
+        //      blobName: uploadBlobName,
+        //      ownerUserId: null
+        //    );
 
-            var uploadName = Path.GetFileName(uploadPath);
-            typeProvider.TryGetContentType(uploadPath, out var uploadMimeType);
-            var byteSizeOfUpload = System.IO.File.ReadAllBytes(uploadPath);
-            var uploadHashString = _fileContentHashProvider.GetHashString(byteSizeOfUpload);
+        //    await _fileRepository.InsertAsync(upload, autoSave: true);
+        //    await _fileManager.TrySaveBlobAsync(upload, byteSizeOfUpload);
 
-            var uploadConfiguration = _configurationProvider.Get(containerName);
-            if (uploadConfiguration == null)
-            {
-                throw new Exception($"File container configuration for '{containerName}' was not found. Please configure it in the module.");
-            }
+        //    #endregion
 
-            var uploadBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, uploadName, null, uploadMimeType, uploadConfiguration.AbpBlobDirectorySeparator);
-
-            var upload = new EasyAbp.FileManagement.Files.File(
-                id: filesImageId,
-                tenantId: tenantId,
-                parent: null,
-                fileContainerName: containerName,
-                fileName: uploadName,
-                mimeType: uploadMimeType,
-                fileType: FileType.RegularFile,
-                subFilesQuantity: 0,
-                byteSize: byteSizeOfUpload.Length,
-                hash: uploadHashString,
-                blobName: uploadBlobName,
-                ownerUserId: null
-            );
-
-            await _fileRepository.InsertAsync(upload, autoSave: true);
-            await _fileManager.TrySaveBlobAsync(upload, byteSizeOfUpload);
-
-            #endregion
-        }
-        #endregion
+        //}
+        //#endregion
         #region Newses
 
         private async Task SeedNewsAsync(Guid? tenantId, Guid filesImageId, Guid uploadImageId)
