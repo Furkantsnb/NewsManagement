@@ -12,4 +12,6 @@ namespace NewsManagement2.Entities.Tags
         Task<List<Tag>> GetListAsync(int skipCount, int maxResultCount, string sorting, string filter = null);
 
     }
+
+
 }

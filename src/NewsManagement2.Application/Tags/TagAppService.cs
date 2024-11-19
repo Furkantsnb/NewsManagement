@@ -1,4 +1,5 @@
 ﻿using NewsManagement2.Entities.Tags;
+using NewsManagement2.EntityDtos.PagedAndSortedDto;
 using NewsManagement2.EntityDtos.TagDtos;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,11 @@ namespace NewsManagement2.Tags
         }
 
         public Task DeleteHardAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedResultDto<TagDto>> GetListAsync(GetListPagedAndSortedDto input)
         {
             throw new NotImplementedException();
         }
