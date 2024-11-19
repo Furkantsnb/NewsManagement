@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp;
+using Volo.Abp.Domain.Entities;
 
 namespace NewsManagement2.Entities.Tags
 {
@@ -56,5 +57,18 @@ namespace NewsManagement2.Entities.Tags
             return tagDto;
         }
 
+        public async Task DeleteAsync(int id)
+        {
+            var isTagExist = await _tagRepository.AnyAsync(t => t.Id == id);
+            if (!isTagExist)
+                throw new EntityNotFoundException(typeof(Tag), id);
+        }
+
+        public async Task DeleteHardAsync(int id)
+        {
+            var tag = await _tagRepository.GetAsync(id);
+
+            await _tagRepository.HardDeleteAsync(tag);
+        }
     }
 }
