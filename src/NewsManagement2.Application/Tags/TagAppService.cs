@@ -12,15 +12,19 @@ using Volo.Abp.Domain.Repositories;
 
 namespace NewsManagement2.Tags
 {
-    public class TagAppService : CrudAppService<Tag, TagDto, int, PagedAndSortedResultRequestDto, CreateTagDto, UpdateTagDto>, ITagAppService
+    public class TagAppService : CrudAppService<Tag, TagDto, int, GetListPagedAndSortedDto, CreateTagDto, UpdateTagDto>, ITagAppService
     {
-        public TagAppService(IRepository<Tag, int> repository) : base(repository)
+        private readonly TagManager _tagManager;
+
+        public TagAppService(IRepository<Tag, int> repository, TagManager tagManager) : base(repository)
         {
+            _tagManager = tagManager;
+
         }
 
-        public Task DeleteHardAsync(int id)
+        public async Task DeleteHardAsync(int id)
         {
-            throw new NotImplementedException();
+            await _tagManager.DeleteHardAsync(id);
         }
 
         public Task<PagedResultDto<TagDto>> GetListAsync(GetListPagedAndSortedDto input)
