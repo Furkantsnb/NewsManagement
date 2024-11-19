@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using NewsManagement2.Entities.Tags;
+using NewsManagement2.EntityDtos.TagDtos;
 
 namespace NewsManagement2;
 
@@ -6,8 +8,10 @@ public class NewsManagement2ApplicationAutoMapperProfile : Profile
 {
     public NewsManagement2ApplicationAutoMapperProfile()
     {
-        /* You can configure your AutoMapper mapping configuration here.
-         * Alternatively, you can split your mapping configurations
-         * into multiple profile classes for a better organization. */
+        #region Tag
+        CreateMap<Tag, TagDto>().ReverseMap();
+        CreateMap<UpdateTagDto, Tag>().ReverseMap();
+        CreateMap<CreateTagDto, Tag>().ReverseMap();
+        #endregion
     }
 }
