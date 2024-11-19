@@ -26,6 +26,12 @@ namespace NewsManagement2.Tags
             return await _tagManager.CreateAsync(createTagDto);
         }
 
+        public override async Task DeleteAsync(int id)
+        {
+            await _tagManager.DeleteAsync(id);
+
+            await base.DeleteAsync(id);
+        }
         public async Task DeleteHardAsync(int id)
         {
             await _tagManager.DeleteHardAsync(id);
