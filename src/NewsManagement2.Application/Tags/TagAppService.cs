@@ -37,9 +37,10 @@ namespace NewsManagement2.Tags
             await _tagManager.DeleteHardAsync(id);
         }
 
-        public Task<PagedResultDto<TagDto>> GetListAsync(GetListPagedAndSortedDto input)
+       
+        public async override Task<PagedResultDto<TagDto>> GetListAsync(GetListPagedAndSortedDto input)
         {
-            throw new NotImplementedException();
+            return await _tagManager.GetListAsync(input);
         }
     }
 }
