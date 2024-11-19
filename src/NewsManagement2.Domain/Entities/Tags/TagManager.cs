@@ -39,5 +39,22 @@ namespace NewsManagement2.Entities.Tags
             return tagDto;
         }
 
+        public async Task<TagDto> UpdateAsync(int id, UpdateTagDto updateTag)
+        {
+            var existingTag = await _tagRepository.GetAsync(id);
+
+            var tagAlreadyExists = await _tagRepository.AnyAsync(t => t.TagName == updateTag.TagName && t.Id != id);
+            if (tagAlreadyExists)
+                 throw new BusinessException("aynı isimde tag mevcut");
+
+            _objectMapper.Map(updateTag, existingTag);
+
+            var tag = await _tagRepository.UpdateAsync(existingTag);
+
+            var tagDto = _objectMapper.Map<Tag, TagDto>(tag);
+
+            return tagDto;
+        }
+
     }
 }
