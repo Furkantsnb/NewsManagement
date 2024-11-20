@@ -1,11 +1,13 @@
 ﻿using NewsManagement2.Entities.Exceptions;
 using NewsManagement2.EntityDtos.CityDtos;
+using NewsManagement2.EntityDtos.PagedAndSortedDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
@@ -65,6 +67,27 @@ namespace NewsManagement2.Entities.Cities
 
 
 
+        }
+        public async Task<PagedResultDto<CityDto>> GetListAsync(GetListPagedAndSortedDto input)
+        {
+            var totalCount = input.Filter == null
+       ? await _cityRepository.CountAsync()
+       : await _cityRepository.CountAsync(c => c.CityName.Contains(input.Filter));
+
+            if (totalCount == 0)
+                throw new NotFoundException(typeof(City), input.Filter ?? string.Empty);
+
+            if (input.SkipCount >= totalCount)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.InvalidFilterCriteria);
+
+            if (input.Sorting.IsNullOrWhiteSpace())
+                input.Sorting = nameof(City.CityName);
+
+            var cityList = await _cityRepository.GetListAsync(input.SkipCount, input.MaxResultCount, input.Sorting, input.Filter);
+
+            var cityDtoList = _objectMapper.Map<List<City>, List<CityDto>>(cityList);
+
+            return new PagedResultDto<CityDto>(totalCount, cityDtoList);
         }
         public async Task DeleteAsync(int id)
         {
