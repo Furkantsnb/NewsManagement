@@ -12,7 +12,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
-namespace NewsManagement2.Tags
+namespace NewsManagement2.AppService.Tags
 {
     [Authorize(NewsManagement2Permissions.Tags.Default)]
     public class TagAppService : CrudAppService<Tag, TagDto, int, GetListPagedAndSortedDto, CreateTagDto, UpdateTagDto>, ITagAppService
@@ -48,7 +48,7 @@ namespace NewsManagement2.Tags
             await _tagManager.DeleteHardAsync(id);
         }
 
-       
+
         public async override Task<PagedResultDto<TagDto>> GetListAsync(GetListPagedAndSortedDto input)
         {
             return await _tagManager.GetListAsync(input);
