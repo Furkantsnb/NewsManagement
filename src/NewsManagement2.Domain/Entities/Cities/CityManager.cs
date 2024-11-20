@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
@@ -64,6 +65,12 @@ namespace NewsManagement2.Entities.Cities
 
 
 
+        }
+        public async Task DeleteAsync(int id)
+        {
+            var isCityExist = await _cityRepository.AnyAsync(c => c.Id == id);
+            if (!isCityExist)
+                throw new EntityNotFoundException(typeof(City), id);
         }
     }
 }
