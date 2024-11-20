@@ -72,5 +72,11 @@ namespace NewsManagement2.Entities.Cities
             if (!isCityExist)
                 throw new EntityNotFoundException(typeof(City), id);
         }
+        public async Task DeleteHardAsync(int id)
+        {
+            var city = await _cityRepository.GetAsync(id);
+
+            await _cityRepository.HardDeleteAsync(city);
+        }
     }
 }
