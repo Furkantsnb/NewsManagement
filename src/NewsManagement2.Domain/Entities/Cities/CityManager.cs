@@ -42,5 +42,28 @@ namespace NewsManagement2.Entities.Cities
 
 
         }
+
+        public async Task<CityDto>UpdateAsync(int id , UpdateCityDto updateCityDto)
+        {
+            var existingCity = await _cityRepository.GetAsync(id);
+
+            var cityAlreadyExists = await _cityRepository.AnyAsync(c =>
+                                         c.CityName == updateCityDto.CityName);
+            if (cityAlreadyExists)
+                throw new AlreadyExistException(typeof(City), updateCityDto.CityName.ToString());
+            var cityCodeAlreadyExists = await _cityRepository.AnyAsync(c => c.CityCode == updateCityDto.CityCode);
+
+            if (cityCodeAlreadyExists)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.DuplicateCityCode);
+
+            _objectMapper.Map(updateCityDto, existingCity);
+            var city = await _cityRepository.UpdateAsync(existingCity,autoSave:true);
+            var cityDto = _objectMapper.Map<City, CityDto>(city);
+
+            return cityDto;
+
+
+
+        }
     }
 }
