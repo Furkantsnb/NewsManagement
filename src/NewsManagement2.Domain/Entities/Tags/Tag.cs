@@ -17,7 +17,7 @@ namespace NewsManagement2.Entities.Tags
         public ICollection<ListableContentTag> ListableContentTags { get; set; }
 
 
-        internal Tag()
+        public Tag()
         {
         }
 

@@ -12,4 +12,8 @@ public static class NewsManagement2DomainErrorCodes
     public const string InvalidFilterCriteria = "NewsManagement:400"; //hatalı filtreleme
     public const string ResourceNotFound = "NewsManagement:404"; // Kaynak bulunamadı
     public const string ResourceAlreadyExists = "NewsManagement:409"; // Çakışma (Conflict)
+
+    // Şehir Kodları Hataları
+    public const string DuplicateCityCode = "NewsManagement:470"; // Şehir kodu zaten var
+
 }
