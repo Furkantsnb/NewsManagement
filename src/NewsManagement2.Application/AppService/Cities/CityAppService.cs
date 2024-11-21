@@ -19,7 +19,10 @@ namespace NewsManagement2.AppService.Cities
         {
             _cityManager = cityManager;
         }
-
+        public override async Task<CityDto> CreateAsync(CreateCityDto createCityDto)
+        {
+            return await _cityManager.CreateAsync(createCityDto);
+        }
         public async Task DeleteHardAsync(int id)
         {
             await _cityManager.DeleteHardAsync(id);
