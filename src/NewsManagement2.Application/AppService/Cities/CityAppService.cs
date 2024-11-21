@@ -32,6 +32,12 @@ namespace NewsManagement2.AppService.Cities
         {
             return await _cityManager.GetListAsync(input);
         }
+        public override async Task DeleteAsync(int id)
+        {
+            await _cityManager.DeleteAsync(id);
+
+            await base.DeleteAsync(id);
+        }
         public async Task DeleteHardAsync(int id)
         {
             await _cityManager.DeleteHardAsync(id);
