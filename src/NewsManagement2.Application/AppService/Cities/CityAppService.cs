@@ -20,9 +20,9 @@ namespace NewsManagement2.AppService.Cities
             _cityManager = cityManager;
         }
 
-        public Task DeleteHardAsync(int id)
+        public async Task DeleteHardAsync(int id)
         {
-            throw new NotImplementedException();
+            await _cityManager.DeleteHardAsync(id);
         }
     }
 }
