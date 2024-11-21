@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
@@ -26,6 +27,10 @@ namespace NewsManagement2.AppService.Cities
         public async override Task<CityDto> UpdateAsync(int id, UpdateCityDto updateCityDto)
         {
             return await _cityManager.UpdateAsync(id, updateCityDto);
+        }
+        public async override Task<PagedResultDto<CityDto>> GetListAsync(GetListPagedAndSortedDto input)
+        {
+            return await _cityManager.GetListAsync(input);
         }
         public async Task DeleteHardAsync(int id)
         {
