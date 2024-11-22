@@ -9,11 +9,11 @@ public static class NewsManagement2DomainErrorCodes
     //500 Serisi: Sunucu Hataları (Server Errors)
 
     // Genel Hatalar
-    public const string InvalidFilterCriteria = "NewsManagement:400"; //hatalı filtreleme
-    public const string ResourceNotFound = "NewsManagement:404"; // Kaynak bulunamadı
-    public const string ResourceAlreadyExists = "NewsManagement:409"; // Çakışma (Conflict)
+    public const string InvalidFilterCriteria = "NewsManagement2:400"; //hatalı filtreleme
+    public const string ResourceNotFound = "NewsManagement2:404"; // Kaynak bulunamadı
+    public const string ResourceAlreadyExists = "NewsManagement2:409"; // Çakışma (Conflict)
 
     // Şehir Kodları Hataları
-    public const string DuplicateCityCode = "NewsManagement:470"; // Şehir kodu zaten var
+    public const string DuplicateCityCode = "NewsManagement2:470"; // Şehir kodu zaten var
 
 }

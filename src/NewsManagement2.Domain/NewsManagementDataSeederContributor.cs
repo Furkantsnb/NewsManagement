@@ -1,6 +1,5 @@
 ﻿using EasyAbp.FileManagement.Files;
 using EasyAbp.FileManagement.Options.Containers;
-using Microsoft.AspNetCore.StaticFiles;
 using NewsManagement2.Entities.Categories;
 using NewsManagement2.Entities.Cities;
 using NewsManagement2.Entities.Galleries;

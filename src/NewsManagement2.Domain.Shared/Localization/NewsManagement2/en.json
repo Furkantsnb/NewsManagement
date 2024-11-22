@@ -3,6 +3,48 @@
   "texts": {
     "Menu:Home": "Home",
     "Welcome": "Welcome",
-    "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information, visit abp.io."
+    "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information, visit abp.io.",
+
+
+    // Genel Hatalar
+    "NewsManagement2:400": "Filter request limit exceeded",
+    "NewsManagement2:404": "{0} = {1} Not Found.",
+    "NewsManagement2:409": "There is already {0} with the same name: {1}",
+
+    // Şehir Kodları Hataları
+    "NewsManagement2:470": "City Code already exists. Index : {0}",
+
+
+
+
+    "Permission:Tags": "Tag",
+    "Permission:Tags.Create": "Create",
+    "Permission:Tags.Edit": "Edit",
+    "Permission:Tags.Delete": "Delete",
+
+    "Permission:Cities": "City",
+    "Permission:Cities.Create": "Create",
+    "Permission:Cities.Edit": "Edit",
+    "Permission:Cities.Delete": "Delete",
+
+    "Permission:Categories": "Category",
+    "Permission:Categories.Create": "Create",
+    "Permission:Categories.Edit": "Edit",
+    "Permission:Categories.Delete": "Delete",
+
+    "Permission:Newses": "News",
+    "Permission:Newses.Create": "Create",
+    "Permission:Newses.Edit": "Edit",
+    "Permission:Newses.Delete": "Delete",
+
+    "Permission:Galleries": "Gallery",
+    "Permission:Galleries.Create": "Create",
+    "Permission:Galleries.Edit": "Edit",
+    "Permission:Galleries.Delete": "Delete",
+
+    "Permission:Videos": "Video",
+    "Permission:Videos.Create": "Create",
+    "Permission:Videos.Edit": "Edit",
+    "Permission:Videos.Delete": "Delete"
   }
 }

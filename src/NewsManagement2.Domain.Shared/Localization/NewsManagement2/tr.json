@@ -3,6 +3,48 @@
   "texts": {
     "Menu:Home": "Ana sayfa",
     "Welcome": "Hoşgeldiniz",
-    "LongWelcomeMessage": "Uygulamaya hoşgeldiniz. Bu, ABP framework'ü üzerine bina edilmiş bir başlangıç projesidir. Daha fazla bilgi için abp.io adresini ziyaret edebilirsiniz."
+    "LongWelcomeMessage": "Uygulamaya hoşgeldiniz. Bu, ABP framework'ü üzerine bina edilmiş bir başlangıç projesidir. Daha fazla bilgi için abp.io adresini ziyaret edebilirsiniz.",
+
+
+    // Genel Hatalar
+    "NewsManagement2:400": "Filitre istek sınırı aşıldı.",
+    "NewsManagement2:404": "{0} = {1} Bulunamadı.",
+    "NewsManagement2:409": "{1} ile aynı isimli bir {0} önceden oluşturulmuş.",
+
+    // Şehir Kodları Hataları
+    "NewsManagement2:470": "Şehir Kodu zaten mevcut. Index : {0}",
+
+
+
+    "Permission:Tags": "Etiket",
+    "Permission:Tags.Create": "Oluşturma",
+    "Permission:Tags.Edit": "Düzenleme",
+    "Permission:Tags.Delete": "Silme",
+
+    "Permission:Cities": "Şehir",
+    "Permission:Cities.Create": "Oluşturma",
+    "Permission:Cities.Edit": "Düzenleme",
+    "Permission:Cities.Delete": "Silme",
+
+    "Permission:Categories": "Kategori",
+    "Permission:Categories.Create": "Oluşturma",
+    "Permission:Categories.Edit": "Düzenleme",
+    "Permission:Categories.Delete": "Silme",
+
+    "Permission:Newses": "Haber",
+    "Permission:Newses.Create": "Oluşturma",
+    "Permission:Newses.Edit": "Düzenleme",
+    "Permission:Newses.Delete": "Silme",
+
+    "Permission:Galleries": "Galeri",
+    "Permission:Galleries.Create": "Oluşturma",
+    "Permission:Galleries.Edit": "Düzenleme",
+    "Permission:Galleries.Delete": "Silme",
+
+    "Permission:Videos": "Video",
+    "Permission:Videos.Create": "Oluşturma",
+    "Permission:Videos.Edit": "Düzenleme",
+    "Permission:Videos.Delete": "Silme"
+
   }
 }
