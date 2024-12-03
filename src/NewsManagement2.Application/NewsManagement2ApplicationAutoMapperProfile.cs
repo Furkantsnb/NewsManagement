@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using NewsManagement2.Entities.Categories;
 using NewsManagement2.Entities.Cities;
 using NewsManagement2.Entities.Tags;
+using NewsManagement2.EntityDtos.CategoryDtos;
 using NewsManagement2.EntityDtos.CityDtos;
 using NewsManagement2.EntityDtos.TagDtos;
 
@@ -20,6 +22,12 @@ public class NewsManagement2ApplicationAutoMapperProfile : Profile
         CreateMap<City, CityDto>().ReverseMap();
         CreateMap<UpdateCityDto, City>().ReverseMap();
         CreateMap<CreateCityDto, City>().ReverseMap();
+        #endregion
+
+        #region Category
+        CreateMap<Category, CategoryDto>().ReverseMap();
+        CreateMap<UpdateCategoryDto, Category>().ReverseMap();
+        CreateMap<CreateCategoryDto, Category>().ReverseMap();
         #endregion
     }
 
