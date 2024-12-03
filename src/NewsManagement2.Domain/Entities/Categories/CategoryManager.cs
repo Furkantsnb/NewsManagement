@@ -257,6 +257,48 @@ namespace NewsManagement2.Entities.Categories
         }
 
 
+        /// <summary>
+        /// Belirtilen bir kategoriye bağlı alt kategorileri döndürür.
+        /// </summary>
+        /// <param name="id">Kategorinin ID'si.</param>
+        /// <returns>Kategori ve bağlı alt kategoriler listesi.</returns>
+        public async Task<List<Category>> GetSubCategoriesByIdAsync(int id)
+        {
+            // Belirtilen kategori alınır
+            var category = await _categoryRepository.GetAsync(id);
+
+            // Eğer kategori aktif değilse hata fırlat
+            if (!category.IsActive)
+                throw new NotFoundException(typeof(Category), id.ToString());
+
+            var categoryList = new List<Category>();
+
+            // Ana kategori ise alt kategoriler dahil edilir
+            if (!category.ParentCategoryId.HasValue)
+            {
+                categoryList.AddRange(await _categoryRepository.GetListAsync(
+                    c => c.ParentCategoryId == id && c.listableContentType == category.listableContentType && c.IsActive
+                ));
+
+                // Ana kategori de listeye eklenir
+                categoryList.Add(category);
+            }
+
+            // Alt kategori ise aynı ana kategoriye sahip diğer alt kategoriler eklenir
+            if (category.ParentCategoryId.HasValue)
+            {
+                categoryList.AddRange(await _categoryRepository.GetListAsync(
+                    c => c.ParentCategoryId == category.ParentCategoryId && c.listableContentType == category.listableContentType && c.IsActive
+                ));
+
+                // Ana kategori listeye eklenir
+                categoryList.Add(await _categoryRepository.GetAsync((int)category.ParentCategoryId));
+            }
+
+            return categoryList;
+        }
+
+
 
     }
 }
