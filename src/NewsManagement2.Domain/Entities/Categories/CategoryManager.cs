@@ -9,6 +9,7 @@ using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
 using NewsManagement2.Entities.Exceptions;
 using NewsManagement2.EntityDtos.CategoryDtos;
+using Volo.Abp.Domain.Repositories;
 
 namespace NewsManagement2.Entities.Categories
 {
@@ -187,6 +188,38 @@ namespace NewsManagement2.Entities.Categories
             // Soft delete uygulanacak kategoriler döndürülür
             return deletingList;
         }
+
+        /// <summary>
+        /// Belirtilen kategoriyi ve varsa alt kategorilerini tamamen siler (Hard Delete).
+        /// </summary>
+        /// <param name="id">Silinecek kategorinin ID'si.</param>
+        public async Task HardDeleteAsync(int id)
+        {
+            // Kategori veritabanından alınır
+            var category = await _categoryRepository.GetAsync(id);
+
+            // Ana kategori ise alt kategorileri kontrol et
+            if (!category.ParentCategoryId.HasValue)
+            {
+                using (_softDeleteFilter.Disable()) // Soft delete filtresini devre dışı bırak
+                {
+                    // Alt kategoriler alınır
+                    var deletingList = await _categoryRepository.GetListAsync(
+                        c => c.ParentCategoryId == id && c.listableContentType == category.listableContentType
+                    );
+
+                    // Ana kategori alt kategorilerle birlikte tamamen silinir
+                    deletingList.Add(category);
+                    await _categoryRepository.HardDeleteAsync(deletingList);
+                }
+            }
+            else
+            {
+                // Tek kategori hard delete yapılır
+                await _categoryRepository.HardDeleteAsync(category);
+            }
+        }
+
 
     }
 }
