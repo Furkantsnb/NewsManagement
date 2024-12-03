@@ -10,6 +10,8 @@ using Volo.Abp.ObjectMapping;
 using NewsManagement2.Entities.Exceptions;
 using NewsManagement2.EntityDtos.CategoryDtos;
 using Volo.Abp.Domain.Repositories;
+using NewsManagement2.EntityDtos.PagedAndSortedDto;
+using Volo.Abp.Application.Dtos;
 
 namespace NewsManagement2.Entities.Categories
 {
@@ -219,6 +221,41 @@ namespace NewsManagement2.Entities.Categories
                 await _categoryRepository.HardDeleteAsync(category);
             }
         }
+
+        /// <summary>
+        /// Filtre, sıralama ve sayfalama destekli kategori listesi döndürür.
+        /// </summary>
+        /// <param name="input">Sayfalama ve filtreleme için DTO.</param>
+        /// <returns>PagedResultDto formatında kategori listesi.</returns>
+        public async Task<PagedResultDto<CategoryDto>> GetListAsync(GetListPagedAndSortedDto input)
+        {
+            // Kategori sayısı alınır
+            var totalCount = input.Filter == null
+                ? await _categoryRepository.CountAsync()
+                : await _categoryRepository.CountAsync(c => c.CategoryName.Contains(input.Filter));
+
+            // Hiç kategori bulunamazsa hata fırlat
+            if (totalCount == 0)
+                throw new NotFoundException(typeof(Category), input.Filter ?? string.Empty);
+
+            // Sayfalama sınırlarını kontrol et
+            if (input.SkipCount >= totalCount)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.FilterLimitsError);
+
+            // Sıralama değeri boş ise varsayılan olarak "CategoryName" kullanılır
+            if (input.Sorting.IsNullOrWhiteSpace())
+                input.Sorting = nameof(Category.CategoryName);
+
+            // Kategoriler listelenir
+            var categoryList = await _categoryRepository.GetListAsync(input.SkipCount, input.MaxResultCount, input.Sorting, input.Filter);
+
+            // Kategoriler DTO'ya dönüştürülür
+            var categoryDtoList = _objectMapper.Map<List<Category>, List<CategoryDto>>(categoryList);
+
+            // Sonuç PagedResultDto formatında döndürülür
+            return new PagedResultDto<CategoryDto>(totalCount, categoryDtoList);
+        }
+
 
 
     }
