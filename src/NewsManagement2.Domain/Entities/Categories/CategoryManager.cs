@@ -36,7 +36,7 @@ namespace NewsManagement2.Entities.Categories
         /// </summary>
         /// <param name="createCategoryDto">Oluşturulacak kategorinin DTO'su.</param>
         /// <returns>Oluşturulan kategorinin DTO'su.</returns>
-        public async Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto createCategoryDto)
+        public async Task<CategoryDto> CreateAsync(CreateCategoryDto createCategoryDto)
         {
             // DTO'dan Entity'ye dönüştürme
             var category = _objectMapper.Map<CreateCategoryDto, Category>(createCategoryDto);
@@ -62,7 +62,7 @@ namespace NewsManagement2.Entities.Categories
         /// <param name="id">Güncellenecek kategorinin ID'si.</param>
         /// <param name="updateCategoryDto">Güncelleme için DTO.</param>
         /// <returns>Güncellenen kategorinin DTO'su.</returns>
-        public async Task<CategoryDto> UpdateCategoryAsync(int id, UpdateCategoryDto updateCategoryDto)
+        public async Task<CategoryDto> UpdateAsync(int id, UpdateCategoryDto updateCategoryDto)
         {
             // Mevcut kategoriyi al
             var existingCategory = await _categoryRepository.GetAsync(id);
@@ -169,7 +169,7 @@ namespace NewsManagement2.Entities.Categories
         /// </summary>
         /// <param name="id">Silinecek kategorinin ID'si.</param>
         /// <returns>Soft delete yapılan kategorilerin listesi.</returns>
-        public async Task<List<Category>> SoftDeleteAsync(int id)
+        public async Task<List<Category>> DeleteAsync(int id)
         {
             // Kategori veritabanından alınır
             var category = await _categoryRepository.GetAsync(id);
@@ -195,7 +195,7 @@ namespace NewsManagement2.Entities.Categories
         /// Belirtilen kategoriyi ve varsa alt kategorilerini tamamen siler (Hard Delete).
         /// </summary>
         /// <param name="id">Silinecek kategorinin ID'si.</param>
-        public async Task HardDeleteAsync(int id)
+        public async Task DeleteHardAsync(int id)
         {
             // Kategori veritabanından alınır
             var category = await _categoryRepository.GetAsync(id);
