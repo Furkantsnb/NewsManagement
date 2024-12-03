@@ -160,5 +160,33 @@ namespace NewsManagement2.Entities.Categories
                 await _categoryRepository.UpdateAsync(subCategory, autoSave: true);
             }
         }
+
+        /// <summary>
+        /// Belirtilen kategoriyi ve varsa alt kategorilerini soft delete yapar.
+        /// </summary>
+        /// <param name="id">Silinecek kategorinin ID'si.</param>
+        /// <returns>Soft delete yapılan kategorilerin listesi.</returns>
+        public async Task<List<Category>> SoftDeleteAsync(int id)
+        {
+            // Kategori veritabanından alınır
+            var category = await _categoryRepository.GetAsync(id);
+
+            var deletingList = new List<Category>();
+
+            // Ana kategori ise, alt kategoriler dahil edilir
+            if (!category.ParentCategoryId.HasValue)
+            {
+                deletingList.AddRange(await _categoryRepository.GetListAsync(
+                    c => c.ParentCategoryId == id && c.listableContentType == category.listableContentType
+                ));
+            }
+
+            // Kategori listeye eklenir
+            deletingList.Add(category);
+
+            // Soft delete uygulanacak kategoriler döndürülür
+            return deletingList;
+        }
+
     }
 }
