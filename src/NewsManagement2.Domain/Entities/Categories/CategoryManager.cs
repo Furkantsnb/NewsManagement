@@ -12,11 +12,13 @@ namespace NewsManagement2.Entities.Categories
 {
     public class CategoryManager : DomainService
     {
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IObjectMapper _objectMapper;
         private readonly IDataFilter<ISoftDelete> _softDeleteFilter;
 
-        public CategoryManager(IObjectMapper objectMapper, IDataFilter<ISoftDelete> softDeleteFilter)
+        public CategoryManager(ICategoryRepository categoryRepository, IObjectMapper objectMapper, IDataFilter<ISoftDelete> softDeleteFilter)
         {
+            _categoryRepository = categoryRepository;
             _objectMapper = objectMapper;
             _softDeleteFilter = softDeleteFilter;
         }
