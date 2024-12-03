@@ -14,6 +14,12 @@
     // Şehir Kodları Hataları
     "NewsManagement2:470": "Şehir Kodu zaten mevcut. Index : {0}",
 
+    // Kategori Hataları
+    "NewsManagement2:422": "Alt kategori ile ana kategori aynı içerik türüne sahip olmalıdır.",
+    "NewsManagement2:423": "Alt kategori, ana kategoriyle aynı isme sahip olamaz. Farklı bir isim seçin.",
+    "NewsManagement2:424": "Bir kategori yalnızca bir alt kategoriye sahip olabilir.",
+    "NewsManagement2:425": "Alt kategorilere sahip bir ana kategori taşınamaz veya değiştirilemez.",
+
 
 
     "Permission:Tags": "Etiket",

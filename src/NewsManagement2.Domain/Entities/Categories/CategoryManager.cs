@@ -240,7 +240,7 @@ namespace NewsManagement2.Entities.Categories
 
             // Sayfalama sınırlarını kontrol et
             if (input.SkipCount >= totalCount)
-                throw new BusinessException(NewsManagement2DomainErrorCodes.FilterLimitsError);
+                throw new BusinessException(NewsManagement2DomainErrorCodes.InvalidFilterCriteria);
 
             // Sıralama değeri boş ise varsayılan olarak "CategoryName" kullanılır
             if (input.Sorting.IsNullOrWhiteSpace())
