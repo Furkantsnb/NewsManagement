@@ -5,20 +5,56 @@
     "Welcome": "Welcome",
     "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information, visit abp.io.",
 
+    "Draft": "Draft",
+    "PendingReview": "Pending Review",
+    "Archived": "Archived",
+    "Published": "Published",
+    "Scheduled": "Scheduled",
+    "Deleted": "Deleted",
+    "Rejected": "Rejected",
 
-    // Genel Hatalar
-    "NewsManagement2:400": "Filter request limit exceeded",
-    "NewsManagement2:404": "{0} = {1} Not Found.",
-    "NewsManagement2:409": "There is already {0} with the same name: {1}",
+    "NewsApp.ListableContent": "Listable Content",
+    "NewsApp.Video": "Video",
+    "NewsApp.Gallery": "Gallery",
 
-    // Şehir Kodları Hataları
-    "NewsManagement2:470": "City Code already exists. Index : {0}",
+    // General Errors
+    "NewsManagement2:404": "{0} not found.",
+    "NewsManagement2:409": "{0} already exists.",
+    "NewsManagement2:400": "Invalid filter criteria.",
 
-    // Category Errors
-    "NewsManagement2:422": "Subcategory and main category must have the same content type.",
-    "NewsManagement2:423": "Subcategory cannot have the same name as its parent category. Please choose a different name.",
-    "NewsManagement2:424": "A category can only have one subcategory.",
-    "NewsManagement2:425": "A main category with subcategories cannot be moved or modified.",
+    // Category and Subcategory Errors
+    "NewsManagement2:420": "Subcategory limit exceeded.",
+    "NewsManagement2:421": "Main category cannot be modified.",
+    "NewsManagement2:422": "Subcategory name conflicts with another.",
+    "NewsManagement2:423": "A parent category is required.",
+    "NewsManagement2:424": "Self-referencing is not allowed.",
+
+    // City Code Errors
+    "NewsManagement2:470": "City code already exists.",
+
+    // Status Errors
+    "NewsManagement2:430": "Invalid status transition.",
+    "NewsManagement2:431": "Publish time is required for the selected status.",
+    "NewsManagement2:432": "Draft cannot have a publish time.",
+    "NewsManagement2:433": "Scheduled time must be in the future.",
+    "NewsManagement2:434": "Published status must have the current date/time.",
+    "NewsManagement2:435": "Deleted status cannot be modified.",
+
+    // Video and Link Errors
+    "NewsManagement2:440": "URL is required for link content.",
+    "NewsManagement2:441": "VideoId is required for video content.",
+    "NewsManagement2:442": "URL is not allowed for video content.",
+    "NewsManagement2:443": "VideoId is not allowed for link content.",
+
+    // Sorting and Filtering Errors
+    "NewsManagement2:450": "Invalid sorting parameter.",
+    "NewsManagement2:451": "Too many items were skipped.",
+
+    // Validation Errors
+    "NewsManagement2:460": "Invalid content type selection.",
+    "NewsManagement2:461": "Only one active category is allowed.",
+    "NewsManagement2:462": "Invalid status type.",
+    "NewsManagement2:463": "Invalid video type.",
 
 
 

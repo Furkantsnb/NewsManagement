@@ -4,21 +4,56 @@
     "Menu:Home": "Ana sayfa",
     "Welcome": "Hoşgeldiniz",
     "LongWelcomeMessage": "Uygulamaya hoşgeldiniz. Bu, ABP framework'ü üzerine bina edilmiş bir başlangıç projesidir. Daha fazla bilgi için abp.io adresini ziyaret edebilirsiniz.",
+    "Draft": "Taslak ",
+    "PendingReview": "İnceleme ",
+    "Archived": "Arşivlenmiş ",
+    "Published": "Yayınlanmış ",
+    "Scheduled": "Planlanmış ",
+    "Deleted": "Silinmiş ",
+    "Rejected": "Reddedilmiş",
+    "NewsApp.ListableContent": "Listelenebilir İçerik",
+    "NewsApp.Video": "Video",
+    "NewsApp.Gallery": "Galeri",
 
 
     // Genel Hatalar
-    "NewsManagement2:400": "Filitre istek sınırı aşıldı.",
-    "NewsManagement2:404": "{0} = {1} Bulunamadı.",
-    "NewsManagement2:409": "{1} ile aynı isimli bir {0} önceden oluşturulmuş.",
+    "NewsManagement2:404": "{0} bulunamadı.",
+    "NewsManagement2:409": "{0} zaten mevcut.",
+    "NewsManagement2:400": "Hatalı filtreleme kriterleri.",
+
+    // Kategori ve Alt Kategori Hataları
+    "NewsManagement2:420": "Alt kategori limiti aşıldı.",
+    "NewsManagement2:421": "Ana kategori değiştirilemez.",
+    "NewsManagement2:422": "Alt kategori ismi çakışıyor.",
+    "NewsManagement2:423": "Üst kategori gerekli.",
+    "NewsManagement2:424": "Kendi kendine referans verilemez.",
 
     // Şehir Kodları Hataları
-    "NewsManagement2:470": "Şehir Kodu zaten mevcut. Index : {0}",
+    "NewsManagement2:470": "Şehir kodu zaten var.",
 
-    // Kategori Hataları
-    "NewsManagement2:422": "Alt kategori ile ana kategori aynı içerik türüne sahip olmalıdır.",
-    "NewsManagement2:423": "Alt kategori, ana kategoriyle aynı isme sahip olamaz. Farklı bir isim seçin.",
-    "NewsManagement2:424": "Bir kategori yalnızca bir alt kategoriye sahip olabilir.",
-    "NewsManagement2:425": "Alt kategorilere sahip bir ana kategori taşınamaz veya değiştirilemez.",
+    // Durum (Status) Hataları
+    "NewsManagement2:430": "Geçersiz durum geçişi.",
+    "NewsManagement2:431": "Seçilen durum için yayın zamanı eksik.",
+    "NewsManagement2:432": "Taslak için yayın zamanı olamaz.",
+    "NewsManagement2:433": "Planlanan zaman gelecekte olmalı.",
+    "NewsManagement2:434": "Yayınlanan durum için tarih/saat 'şu an' olmalı.",
+    "NewsManagement2:435": "Silinmiş durum düzenlenemez.",
+
+    // Video ve Link Hataları
+    "NewsManagement2:440": "Link türü içeriklerde URL gerekli.",
+    "NewsManagement2:441": "Video türü içeriklerde VideoId gerekli.",
+    "NewsManagement2:442": "Video türü içeriklerde URL olamaz.",
+    "NewsManagement2:443": "Link türü içeriklerde VideoId olamaz.",
+
+    // Sıralama ve Filtreleme Hataları
+    "NewsManagement2:450": "Geçersiz sıralama parametresi.",
+    "NewsManagement2:451": "Çok fazla öğe atlandı.",
+
+    // Doğrulama Hataları (Validation Errors)
+    "NewsManagement2:460": "Geçersiz içerik türü seçimi.",
+    "NewsManagement2:461": "Birden fazla aktif kategori olamaz.",
+    "NewsManagement2:462": "Geçersiz durum tipi.",
+    "NewsManagement2:463": "Geçersiz video türü.",
 
 
 
