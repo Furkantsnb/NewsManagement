@@ -10,6 +10,6 @@ namespace NewsManagement2.EntityConsts.ListableContentConsts
         Archived,       //1 Arşivlenmiş 
         Published,      //2 Yayınlanmış  
         Scheduled,      //3 Planlanmış 
-        Deleted,        //4 Silinmiş  
+       // Deleted,        //4 Silinmiş  
     }
 }
