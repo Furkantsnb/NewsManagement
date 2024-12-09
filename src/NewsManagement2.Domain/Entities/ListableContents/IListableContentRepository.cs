@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NewsManagement2.Entities.ListableContents
 {
-    public interface IListableContentRepository
+    public interface IListableContentRepository : IRepository<ListableContent, int>
     {
     }
 }
