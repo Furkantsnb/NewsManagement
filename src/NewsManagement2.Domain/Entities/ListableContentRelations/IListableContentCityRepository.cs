@@ -7,7 +7,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace NewsManagement2.Entities.ListableContentRelations
 {
-    public interface IListableContentCategoryRepository : IRepository<ListableContentCategory>
+    public interface IListableContentCityRepository : IRepository<ListableContentCategory>
     {
         Task<List<ListableContentCategory>> GetCrossListAsync(int id);
     }
