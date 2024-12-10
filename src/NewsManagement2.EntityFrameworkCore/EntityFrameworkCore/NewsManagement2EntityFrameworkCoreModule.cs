@@ -13,6 +13,8 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using EasyAbp.FileManagement.EntityFrameworkCore;
+using NewsManagement2.Entities.ListableContents;
+using NewsManagement2.EntityRepositories.ListableContents;
 
 namespace NewsManagement2.EntityFrameworkCore;
 
@@ -54,6 +56,8 @@ public class NewsManagement2EntityFrameworkCoreModule : AbpModule
                  * See also NewsManagement2MigrationsDbContextFactory for EF Core tooling. */
             options.UseNpgsql();
         });
+
+        context.Services.AddTransient(typeof(IListableContentGenericRepository<>), typeof(ListableContentGenericRepository<>));
 
     }
 }
