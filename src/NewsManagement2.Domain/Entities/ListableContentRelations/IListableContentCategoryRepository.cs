@@ -1,12 +1,11 @@
-﻿using NewsManagement2.Entities.ListableContentRelations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 
-namespace NewsManagement2.Entities.ListableContents
+namespace NewsManagement2.Entities.ListableContentRelations
 {
     public interface IListableContentCategoryRepository : IRepository<ListableContentCategory>
     {
