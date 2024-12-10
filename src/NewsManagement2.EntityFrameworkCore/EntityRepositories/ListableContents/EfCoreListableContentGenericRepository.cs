@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace NewsManagement2.EntityRepositories.ListableContents
 {
-    public class ListableContentGenericRepository<T> : EfCoreRepository<NewsManagement2DbContext, T, int>, IListableContentGenericRepository<T>
+    public class EfCoreListableContentGenericRepository<T> : EfCoreRepository<NewsManagement2DbContext, T, int>, IListableContentGenericRepository<T>
        where T : ListableContent, new()
     {
 
-        public ListableContentGenericRepository(IDbContextProvider<NewsManagement2DbContext> dbContextProvider) : base(dbContextProvider)
+        public EfCoreListableContentGenericRepository(IDbContextProvider<NewsManagement2DbContext> dbContextProvider) : base(dbContextProvider)
         {
         }
 

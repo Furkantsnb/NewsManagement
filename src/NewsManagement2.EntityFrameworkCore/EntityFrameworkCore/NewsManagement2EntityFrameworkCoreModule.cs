@@ -57,7 +57,7 @@ public class NewsManagement2EntityFrameworkCoreModule : AbpModule
             options.UseNpgsql();
         });
 
-        context.Services.AddTransient(typeof(IListableContentGenericRepository<>), typeof(ListableContentGenericRepository<>));
+        context.Services.AddTransient(typeof(IListableContentGenericRepository<>), typeof(EfCoreListableContentGenericRepository<>));
 
     }
 }
