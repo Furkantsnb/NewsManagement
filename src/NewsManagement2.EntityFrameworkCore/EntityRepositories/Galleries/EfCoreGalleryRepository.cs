@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NewsManagement2.Entities.ListableContents
+namespace NewsManagement2.EntityRepositories.Galleries
 {
-    public class ListableContentBaseManager
+    public class EfCoreGalleryRepository
     {
     }
 }
