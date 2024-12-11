@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NewsManagement2.Entities.ListableContents
 {
-    internal class ListableContentManager
+    public class ListableContentManager
     {
     }
 }
