@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <Folder Include="EntityRepositories\Galleries\" />
+    <Folder Include="EntityRepositories\Videos\" />
   </ItemGroup>
 
 </Project>
