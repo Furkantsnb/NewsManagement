@@ -29,8 +29,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EntityRepositories\Galleries\" />
-  </ItemGroup>
-
 </Project>

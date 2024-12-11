@@ -20,7 +20,7 @@ namespace NewsManagement2.EntityRepositories.ListableContentRelations
         public async Task<List<ListableContentCategory>> GetCrossListAsync(int id)
         {
             var dbSet = await GetDbSetAsync();
-
+             
             return await dbSet.Where(x => x.ListableContentId == id)
               .Include(x => x.Category).ToListAsync();
         }
