@@ -125,13 +125,13 @@ namespace NewsManagement2.Entities.Categories
             var parentCategory = await _categoryRepository.GetAsync((int)category.ParentCategoryId);
 
             if (parentCategory.CategoryName == category.CategoryName)
-                throw new BusinessException(NewsManagement2DomainErrorCodes.SubcategoryCannotHaveSameNameParentCategory);
+                throw new BusinessException(NewsManagement2DomainErrorCodes.SubcategoryNameConflict);
 
             if (parentCategory.listableContentType != category.listableContentType)
                 throw new BusinessException(NewsManagement2DomainErrorCodes.MustHaveTheSameContentType);
 
             if (parentCategory.ParentCategoryId.HasValue)
-                throw new BusinessException(NewsManagement2DomainErrorCodes.OnlyOneSubCategory);
+                throw new BusinessException(NewsManagement2DomainErrorCodes.MaxSubcategoryLimitReached);
 
             if (!parentCategory.IsActive)
                 category.IsActive = false;
@@ -145,7 +145,7 @@ namespace NewsManagement2.Entities.Categories
         private async Task ValidateParentIdChangeAsync(int id)
         {
             if (await _categoryRepository.AnyAsync(c => c.ParentCategoryId == id))
-                throw new BusinessException(NewsManagement2DomainErrorCodes.MainCategoryWithSubCannotBeChanged);
+                throw new BusinessException(NewsManagement2DomainErrorCodes.MainCategoryModificationRestricted);
         }
 
         /// <summary>

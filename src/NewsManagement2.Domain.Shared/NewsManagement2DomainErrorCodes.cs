@@ -21,7 +21,9 @@ public static class NewsManagement2DomainErrorCodes
     public const string MainCategoryModificationRestricted = "NewsManagement2:421"; // Ana kategori değiştirilemez
     public const string SubcategoryNameConflict = "NewsManagement2:422"; // Alt kategori ismi çakışıyor
     public const string ParentCategoryRequired = "NewsManagement2:423"; // Üst kategori gerekli
-    public const string SelfReferenceError = "NewsManagement2:424"; // Kendi kendine referans verilemez
+    public const string SelfReferenceError = "NewsManagement2:424"; // Kendi kendine referans verilemez 
+    public const string MustHaveTheSameContentType = "NewsManagement2:425"; // Alt kategori ve ana kategori aynı içerik türüne sahip olmalıdır.
+
 
     // Şehir Kodları Hataları
     public const string DuplicateCityCode = "NewsManagement2:470"; // Şehir kodu zaten var

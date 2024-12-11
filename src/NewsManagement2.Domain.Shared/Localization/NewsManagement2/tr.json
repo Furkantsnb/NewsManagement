@@ -27,7 +27,7 @@
     "NewsManagement2:422": "Alt kategori ismi çakışıyor.",
     "NewsManagement2:423": "Üst kategori gerekli.",
     "NewsManagement2:424": "Kendi kendine referans verilemez.",
-
+    "NewsManagement2:425": "Alt kategori ve ana kategori aynı içerik türüne sahip olmalıdır.",
     // Şehir Kodları Hataları
     "NewsManagement2:470": "Şehir kodu zaten var.",
 
