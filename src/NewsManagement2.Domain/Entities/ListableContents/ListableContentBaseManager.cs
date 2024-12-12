@@ -1,11 +1,13 @@
 ﻿using EasyAbp.FileManagement.Files;
 using NewsManagement2.Entities.Categories;
 using NewsManagement2.Entities.Cities;
+using NewsManagement2.Entities.Exceptions;
 using NewsManagement2.Entities.Galleries;
 using NewsManagement2.Entities.ListableContentRelations;
 using NewsManagement2.Entities.Newses;
 using NewsManagement2.Entities.Tags;
 using NewsManagement2.Entities.Videos;
+using NewsManagement2.EntityConsts.ListableContentConsts;
 using NewsManagement2.EntityDtos.ListableContentDtos;
 using NewsManagement2.EntityDtos.PagedAndSortedDto;
 using System;
@@ -13,6 +15,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
 
@@ -82,6 +86,39 @@ namespace NewsManagement2.Entities.ListableContents
             _listableContentCategoryRepository = listableContentCategoryRepository;
             _listableContentRelationRepository = listableContentRelationRepository;
             _fileRepository = fileRepository;
+        }
+
+        #endregion
+
+        #region İçerik Oluşturma (Create Operations)
+
+        /// <summary>
+        /// Yeni bir içerik oluşturulmadan önce doğrulama ve hazırlık işlemlerini yapar.
+        /// </summary>
+        /// <param name="createDto">Yeni içerik için giriş DTO'su.</param>
+        /// <returns>Hazırlanmış içerik varlığı.</returns>
+        protected async Task<TEntity> CheckCreateInputBaseAsync(TEntityCreateDto createDto)
+        {
+            // Başlık zaten var mı kontrol edilir.
+            var isExist = await _genericRepository.AnyAsync(x => x.Title == createDto.Title);
+            if (isExist)
+                throw new AlreadyExistException(typeof(TEntity), createDto.Title);
+
+
+            // Eğer bir resim ID'si sağlanmışsa, geçerli bir dosya ID olup olmadığı kontrol edilir.
+            if (createDto.ImageId != null)
+                await _fileRepository.GetAsync((Guid)createDto.ImageId);
+
+            // DTO'dan varlık nesnesine dönüştürme işlemi.
+            var entity = _objectMapper.Map<TEntityCreateDto, TEntity>(createDto);
+
+            // İçerik türü, varlık tipi adına göre atanır.
+            string entityTypeName = typeof(TEntity).Name;
+            entity.ListableContentType = (ListableContentType)Enum.Parse(typeof(ListableContentType), entityTypeName);
+
+      
+
+            return entity;
         }
 
         #endregion
