@@ -104,6 +104,9 @@ namespace NewsManagement2.Entities.ListableContents
             if (isExist)
                 throw new AlreadyExistException(typeof(TEntity), createDto.Title);
 
+            if (createDto.Status == StatusType.Deleted)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.InvalidStatusTransition);
+
 
             // Eğer bir resim ID'si sağlanmışsa, geçerli bir dosya ID olup olmadığı kontrol edilir.
             if (createDto.ImageId != null)
@@ -120,12 +123,19 @@ namespace NewsManagement2.Entities.ListableContents
             await CheckTagByIdBaseAsync(createDto.TagIds);
             await CheckCityByIdBaseAsync(createDto.CityIds);
 
+            if (createDto.RelatedListableContentIds != null)
+                await CheckListableContentByIdBaseAsync(createDto.RelatedListableContentIds);
 
+            await CheckListableContentCategoryBaseAsync(createDto.ListableContentCategoryDtos, entity.ListableContentType);
+
+            // Yayın tarihi ve durumu kontrol edilir.
+            CheckStatusAndDateTimeBaseAsync(createDto.Status, createDto.PublishTime);
 
             return entity;
         }
 
         #endregion
+        #region Yardımcı Metotlar (Helper Methods)
 
         /// <summary>
         /// Verilen etiket ID'lerinin (tagIds) geçerliliğini kontrol eder.
@@ -198,5 +208,127 @@ namespace NewsManagement2.Entities.ListableContents
             }
         }
 
+        /// <summary>
+        /// İçeriğin durumu (status) ve yayın tarihi ile ilgili kontrolleri gerçekleştirir.
+        /// - Durumlara göre tarih değerinin uygunluğunu kontrol eder.
+        /// - Geçersiz durumlar veya tarih kombinasyonları için hata fırlatır.
+        /// </summary>
+        /// <param name="type">İçeriğin durumu (örneğin: Draft, Published, Archived).</param>
+        /// <param name="dateTime">İçeriğin yayın tarihi.</param>
+        /// <exception cref="BusinessException">
+        /// Durum ve tarih kombinasyonu hatalı ise uygun bir hata kodu ile istisna fırlatılır.
+        /// </exception>
+        protected void CheckStatusAndDateTimeBaseAsync(StatusType type, DateTime? dateTime)
+        {
+            // Taslak (Draft) durumunda tarih belirtilmişse hata fırlatılır.
+            if (type == StatusType.Draft && dateTime.HasValue)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.InvalidDraftPublishTime);
+
+            // Arşivlenmiş (Archived) durumunda tarih belirtilmişse hata fırlatılır.
+            if (type == StatusType.Archived && dateTime.HasValue)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.InvalidDraftPublishTime);
+
+            // Silinmiş (Deleted) durumunda tarih belirtilmişse hata fırlatılır.
+            if (type == StatusType.Deleted && dateTime.HasValue)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.DeletedStatusCannotBeModified);
+
+            // Yayınlanmış (Published) durumunda tarih belirtilmemişse hata fırlatılır.
+            if (type == StatusType.Published && !dateTime.HasValue)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.MissingPublishTimeForSelectedStatus);
+
+            // Yayınlanmış (Published) durumunda tarih şu anki zaman değilse hata fırlatılır.
+            if (type == StatusType.Published && dateTime.Value.ToString("yyyyMMddHHmm") != DateTime.Now.ToString("yyyyMMddHHmm"))
+                throw new BusinessException(NewsManagement2DomainErrorCodes.InvalidPublishedTime);
+
+            // Planlanmış (Scheduled) durumunda tarih belirtilmemişse hata fırlatılır.
+            if (type == StatusType.Scheduled && !dateTime.HasValue)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.MissingPublishTimeForSelectedStatus);
+
+            // Planlanmış (Scheduled) durumunda tarih geçmiş bir zaman ise hata fırlatılır.
+            if (type == StatusType.Scheduled && dateTime.Value <= DateTime.Now)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.InvalidScheduledPublishTime);
+        }
+
+        /// <summary>
+        /// Verilen listelenebilir içerik ID'lerinin doğruluğunu kontrol eder.
+        /// - ID'lerin çakışmadığını (duplicate) kontrol eder.
+        /// - Her ID'nin galeriler, videolar veya haberler arasında mevcut olup olmadığını doğrular.
+        /// </summary>
+        /// <param name="RelatedListableContentIds">Kontrol edilecek içerik ID'lerinin listesi.</param>
+        /// <exception cref="NotFoundException">
+        /// Eğer herhangi bir ID galeriler, videolar veya haberler arasında bulunamazsa bu hata fırlatılır.
+        /// </exception>
+        protected async Task CheckListableContentByIdBaseAsync(List<int> RelatedListableContentIds)
+        {
+            // Çakışan (duplicate) içerik ID'lerini kontrol eder.
+            CheckDuplicateInputsBase(nameof(RelatedListableContentIds), RelatedListableContentIds);
+
+            // Verilen her içerik ID'sinin mevcut olup olmadığını kontrol eder.
+            foreach (var ListableContentId in RelatedListableContentIds)
+            {
+                var gallery = await _galleryRepository.AnyAsync(x => x.Id == ListableContentId);
+                var video = await _videoRepository.AnyAsync(x => x.Id == ListableContentId);
+                var news = await _newsRepository.AnyAsync(x => x.Id == ListableContentId);
+
+                // Eğer ID galerilerde, videolarda veya haberlerde bulunmazsa hata fırlatılır.
+                if (!gallery && !video && !news)
+                    throw new NotFoundException(typeof(ListableContent), ListableContentId.ToString());
+            }
+        }
+
+
+        /// <summary>
+        /// Listelenebilir içerik için kategori doğrulamalarını gerçekleştirir.
+        /// - Kategori ID'lerinin geçerli olup olmadığını kontrol eder.
+        /// - Her kategori için üst kategori (parent) varlığını doğrular.
+        /// - Kategori türünün (listableContentType) uyumluluğunu kontrol eder.
+        /// </summary>
+        /// <param name="listableContentCategoryDto">Doğrulanacak kategori DTO'larının listesi.</param>
+        /// <param name="type">İçeriğin türü (örneğin: Haber, Video, Galeri).</param>
+        /// <exception cref="NotFoundException">
+        /// - Kategori ID'lerinden biri bulunamazsa bu hata fırlatılır.
+        /// - Kategorinin üst kategorisi eksikse bu hata fırlatılır.
+        /// </exception>
+        /// <exception cref="BusinessException">
+        /// - Kategori türü içeriğin türüyle eşleşmiyorsa hata fırlatılır.
+        /// - Birden fazla "birincil kategori" (primary category) seçilmişse hata fırlatılır.
+        /// </exception>
+        protected async Task CheckListableContentCategoryBaseAsync(List<ListableContentCategoryDto> listableContentCategoryDto, ListableContentType type)
+        {
+            // Kategori ID'lerini kontrol etmek için bir liste oluşturur.
+            var categoryIds = listableContentCategoryDto.Select(x => x.CategoryId).ToList();
+
+            // Çakışan (duplicate) kategori ID'lerini kontrol eder.
+            CheckDuplicateInputsBase(nameof(categoryIds), categoryIds);
+
+            // Kategorileri veri tabanından alır.
+            var categories = await _categoryRepository.GetListAsync(c => categoryIds.Contains(c.Id));
+
+            // Bulunamayan kategori ID'lerini kontrol eder.
+            var isExistCategoyIds = categoryIds.Except(categories.Select(c => c.Id)).ToList();
+            if (isExistCategoyIds.Any())
+                throw new NotFoundException(typeof(ListableContentCategory), string.Join(", ", isExistCategoyIds));
+
+            // Üst kategorileri kontrol eder.
+            var parentCategoryIds = categories.Where(c => c.ParentCategoryId == null).Select(x => x.Id).ToList();
+            var missingCategoryIds = categories.Where(c => c.ParentCategoryId != null && !parentCategoryIds.Contains(c.ParentCategoryId.Value))
+                .Select(x => x.Id)
+                .ToList();
+
+            // Kategori türü uyumluluğunu kontrol eder.
+            if (categories.Any(x => x.listableContentType != type))
+                throw new BusinessException(NewsManagement2DomainErrorCodes.MustHaveTheSameContentType);
+
+            // Birden fazla birincil kategori varsa hata fırlatır.
+            if (listableContentCategoryDto.Count(x => x.IsPrimary) != 1)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.ActiveCategoryLimitExceeded)
+                    .WithData("0", listableContentCategoryDto.Count(x => x.IsPrimary));
+
+            // Eksik üst kategori bağlantılarını kontrol eder.
+            if (missingCategoryIds.Any())
+                throw new BusinessException(NewsManagement2DomainErrorCodes.ParentCategoryRequired)
+                    .WithData("categoryId", string.Join(", ", missingCategoryIds));
+        }
+        #endregion
     }
 }
