@@ -135,6 +135,87 @@ namespace NewsManagement2.Entities.ListableContents
         }
 
         #endregion
+        #region İçerik Güncelleme(Update Operations)
+        /// <summary>
+        /// Mevcut bir içeriği güncellemeden önce gerekli doğrulama ve hazırlıkları yapar.
+        /// - Verilen ID'nin mevcut olup olmadığını kontrol eder.
+        /// - Başlık tekrarı gibi veri tutarlılığı problemlerini önler.
+        /// - İlgili etiketler, şehirler ve ilişkili içerikler gibi bağımlılıkların doğruluğunu kontrol eder.
+        /// - Güncellenen varlığı (entity) geri döndürür.
+        /// </summary>
+        /// <param name="id">Güncellenecek içeriğin ID'si.</param>
+        /// <param name="updateDto">Güncelleme için kullanılan DTO.</param>
+        /// <returns>Güncellenmiş varlığı (entity) geri döndürür.</returns>
+        /// <exception cref="NotFoundException">
+        /// Verilen ID'ye sahip bir içerik bulunamazsa hata fırlatılır.
+        /// </exception>
+        /// <exception cref="AlreadyExistException">
+        /// Aynı başlığa sahip başka bir içerik varsa hata fırlatılır.
+        /// </exception>
+        /// <exception cref="BusinessException">
+        /// Geçersiz durumlar, çakışmalar veya bağımlılıklarda eksiklik tespit edilirse hata fırlatılır.
+        /// </exception>
+        protected async Task<TEntity> CheckUpdateInputBaseAsync(int id, TEntityUpdateDto updateDto)
+        {
+            // 1. Varlığın mevcut olup olmadığını kontrol et
+            var isExistId = await _genericRepository.AnyAsync(x => x.Id == id);
+            if (!isExistId)
+            {
+                // Eğer içerik bulunamazsa NotFoundException fırlat
+                throw new NotFoundException(typeof(TEntity), id.ToString());
+            }
+
+            // 2. Başlık tekrarı olup olmadığını kontrol et
+            var isExist = await _genericRepository.AnyAsync(x => x.Title == updateDto.Title && x.Id != id);
+            if (isExist)
+            {
+                // Eğer aynı başlığa sahip başka bir içerik varsa AlreadyExistException fırlat
+                throw new AlreadyExistException(typeof(TEntity), updateDto.Title);
+            }
+
+            // 3. DTO'yu mevcut varlığa (entity) dönüştür
+            var entity = _objectMapper.Map(updateDto, await _genericRepository.GetAsync(id));
+
+            // 4. Etiketlerin geçerliliğini kontrol et
+            await CheckTagByIdBaseAsync(updateDto.TagIds);
+
+            // 5. Şehirlerin geçerliliğini kontrol et
+            await CheckCityByIdBaseAsync(updateDto.CityIds);
+
+            // 6. İlişkili içeriklerin doğruluğunu kontrol et
+            if (updateDto.RelatedListableContentIds != null)
+            {
+                // Kendine referans veren ilişkili içerikleri kontrol et
+                var listableContentSelfReference = updateDto.RelatedListableContentIds.Any(x => x == id);
+                if (listableContentSelfReference)
+                {
+                    // Kendine referans varsa BusinessException fırlat
+                    throw new BusinessException(NewsManagement2DomainErrorCodes.SelfReferenceError);
+                }
+
+                // İlişkili içeriklerin mevcut olup olmadığını kontrol et
+                await CheckListableContentByIdBaseAsync(updateDto.RelatedListableContentIds);
+            }
+
+            // 7. Kategorilerin doğruluğunu kontrol et
+            await CheckListableContentCategoryBaseAsync(updateDto.ListableContentCategoryDtos, entity.ListableContentType);
+
+            // 8. Durum ve tarih kombinasyonlarını kontrol et
+            CheckStatusAndDateTimeBaseAsync(updateDto.Status, updateDto.PublishTime);
+
+            // 9. Silinmiş durum kontrolü (Deleted)
+            if (entity.Status == StatusType.Deleted)
+            {
+                // Eğer içerik "Deleted" durumunda ise silindi olarak işaretle
+                entity.IsDeleted = true;
+            }
+
+            // 10. Güncellenmiş varlığı geri döndür
+            return entity;
+        }
+
+        #endregion
+
         #region Yardımcı Metotlar (Helper Methods)
 
         /// <summary>
