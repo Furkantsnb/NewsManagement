@@ -116,11 +116,87 @@ namespace NewsManagement2.Entities.ListableContents
             string entityTypeName = typeof(TEntity).Name;
             entity.ListableContentType = (ListableContentType)Enum.Parse(typeof(ListableContentType), entityTypeName);
 
-      
+            // İlgili varlıkların kontrolü yapılır.
+            await CheckTagByIdBaseAsync(createDto.TagIds);
+            await CheckCityByIdBaseAsync(createDto.CityIds);
+
+
 
             return entity;
         }
 
         #endregion
+
+        /// <summary>
+        /// Verilen etiket ID'lerinin (tagIds) geçerliliğini kontrol eder.
+        /// - Çakışan (duplicate) ID'ler var mı kontrol edilir.
+        /// - Her ID'nin veri tabanında mevcut olup olmadığı doğrulanır.
+        /// </summary>
+        /// <param name="tagIds">Doğrulanacak etiket ID'lerinin listesi.</param>
+        /// <exception cref="NotFoundException">
+        /// Eğer herhangi bir etiket ID veri tabanında bulunmazsa bu hata fırlatılır.
+        /// </exception>
+        protected async Task CheckTagByIdBaseAsync(List<int> tagIds)
+        {
+            // Çakışan (duplicate) girişleri kontrol eder.
+            CheckDuplicateInputsBase(nameof(tagIds), tagIds);
+
+            // Verilen her etiket ID'nin mevcut olup olmadığını kontrol eder.
+            foreach (var tagId in tagIds)
+            {
+                var existTag = await _tagRepository.AnyAsync(t => t.Id == tagId);
+                if (!existTag)
+                    throw new NotFoundException(typeof(Tag), tagId.ToString()); // Etiket bulunamazsa hata fırlatır.
+            }
+        }
+
+        /// <summary>
+        /// Verilen şehir ID'lerinin (cityIds) geçerliliğini kontrol eder.
+        /// - Çakışan (duplicate) ID'ler var mı kontrol edilir.
+        /// - Her ID'nin veri tabanında mevcut olup olmadığı doğrulanır.
+        /// </summary>
+        /// <param name="cityIds">Doğrulanacak şehir ID'lerinin listesi.</param>
+        /// <exception cref="NotFoundException">
+        /// Eğer herhangi bir şehir ID veri tabanında bulunmazsa bu hata fırlatılır.
+        /// </exception>
+        protected async Task CheckCityByIdBaseAsync(List<int> cityIds)
+        {
+            // Çakışan (duplicate) girişleri kontrol eder.
+            CheckDuplicateInputsBase(nameof(cityIds), cityIds);
+
+            // Verilen her şehir ID'nin mevcut olup olmadığını kontrol eder.
+            foreach (var cityId in cityIds)
+            {
+                var existCity = await _cityRepository.AnyAsync(c => c.Id == cityId);
+                if (!existCity)
+                    throw new NotFoundException(typeof(City), cityId.ToString()); // Şehir bulunamazsa hata fırlatır.
+            }
+        }
+
+        /// <summary>
+        /// Verilen ID listesinde tekrarlayan (duplicate) değerleri kontrol eder.
+        /// Eğer tekrarlayan değerler bulunursa bir hata fırlatır.
+        /// </summary>
+        /// <param name="inputName">Kontrol edilen listenin adı (örneğin: "tagIds" veya "cityIds").</param>
+        /// <param name="inputId">Kontrol edilecek ID listesidir.</param>
+        /// <exception cref="BusinessException">
+        /// Eğer liste içinde tekrarlayan değerler bulunursa, bir iş kuralı istisnası (BusinessException) fırlatılır.
+        /// </exception>
+        protected void CheckDuplicateInputsBase(string inputName, List<int> inputId)
+        {
+            var duplicates = inputId.GroupBy(x => x) // Listeyi gruplar (her benzersiz ID için bir grup oluşturur).
+                .Where(u => u.Count() > 1)          // Birden fazla kez görünen (duplicate) ID'leri seçer.
+                .Select(u => u.Key)                 // Bu grupların anahtarlarını (tekrarlayan ID'leri) alır.
+                .ToList();                          // Sonuçları bir listeye dönüştürür.
+
+            if (duplicates.Count > 0) // Eğer duplicate değerler varsa
+            {
+                var duplicateUnits = string.Join(", ", duplicates); // Duplicate ID'leri birleştirip, virgülle ayırır.
+                throw new BusinessException(NewsManagement2DomainErrorCodes.RepeatedDataError) // Hata fırlatır.
+                    .WithData("0", inputName) // Hata detayında input ismini belirtir.
+                    .WithData("1", duplicateUnits); // Hata detayında tekrarlayan ID'leri belirtir.
+            }
+        }
+
     }
 }
