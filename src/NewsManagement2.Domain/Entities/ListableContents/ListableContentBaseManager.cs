@@ -20,6 +20,9 @@ using Volo.Abp;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
 using Volo.Abp.Application.Dtos;
+using NewsManagement2.EntityDtos.CategoryDtos;
+using NewsManagement2.EntityDtos.CityDtos;
+using NewsManagement2.EntityDtos.TagDtos;
 
 namespace NewsManagement2.Entities.ListableContents
 {
@@ -302,8 +305,28 @@ namespace NewsManagement2.Entities.ListableContents
         }
 
 
+        /// <summary>
+        /// Verilen bir içerik için ilişkisel varlıkları (etiketler, şehirler, kategoriler ve ilişkili içerikler) alır ve DTO'ya dönüştürür.
+        /// </summary>
+        /// <param name="entityDto">İlgili içeriğin DTO'su.</param>
+        protected async Task GetCrossEntityAsync(TEntityDto entityDto)
+        {
+            var tags = await _listableContentTagRepository.GetCrossListAsync(entityDto.Id);
+            var cities = await _listableContentCityRepository.GetCrossListAsync(entityDto.Id);
+            var relations = await _listableContentRelationRepository.GetCrossListAsync(entityDto.Id);
+            var categiries = await _listableContentCategoryRepository.GetCrossListAsync(entityDto.Id);
 
-  
+            var returnTagDto = _objectMapper.Map<List<ListableContentTag>, List<ReturnTagDto>>(tags);
+            var returnCityDto = _objectMapper.Map<List<ListableContentCity>, List<ReturnCityDto>>(cities);
+            var returnCategoryDto = _objectMapper.Map<List<ListableContentCategory>, List<ReturnCategoryDto>>(categiries);
+            var returnRelationDto = _objectMapper.Map<List<ListableContentRelation>, List<ReturnListableContentRelationDto>>(relations);
+
+            entityDto.Tags = returnTagDto;
+            entityDto.Cities = returnCityDto;
+            entityDto.Categories = returnCategoryDto;
+            entityDto.ListableContentRelations = returnRelationDto;
+        }
+
 
 
         /// <summary>
