@@ -19,6 +19,7 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Application.Dtos;
 
 namespace NewsManagement2.Entities.ListableContents
 {
@@ -216,6 +217,201 @@ namespace NewsManagement2.Entities.ListableContents
 
         #endregion
 
+        #region İçerik Listeleme( GetList Operations)
+        /// <summary>
+        /// Filtreleme, sıralama ve sayfalama destekli bir listeleme metodu.
+        /// - Toplam içerik sayısını hesaplar.
+        /// - Belirtilen filtre kriterlerini uygular.
+        /// - İçeriklerin sıralama, sayfalama ve DTO'ya dönüştürülmesi işlemlerini yapar.
+        /// </summary>
+        /// <param name="input">Sayfalama, sıralama ve filtreleme için kullanılan DTO.</param>
+        /// <returns>Toplam içerik sayısı ve belirtilen kriterlere uygun içeriklerin DTO listesini döndürür.</returns>
+        /// <exception cref="NotFoundException">
+        /// Eğer filtre sonucunda hiçbir içerik bulunamazsa hata fırlatılır.
+        /// </exception>
+        /// <exception cref="BusinessException">
+        /// Eğer "SkipCount" toplam içerik sayısını aşarsa hata fırlatılır.
+        /// </exception>
+        protected async Task<PagedResultDto<TEntityDto>> GetListFilterBaseAsync(TPagedDto input)
+        {
+            // 1. Toplam içerik sayısını hesapla
+            var totalCount = input.Filter == null
+                ? await _genericRepository.CountAsync() // Filtre uygulanmamışsa toplam sayıyı al
+                : await _genericRepository.CountAsync(c => c.Title.Contains(input.Filter)); // Filtre uygulanmışsa kriterlere uyan sayıyı al
+
+            // 2. Hiç içerik bulunamazsa NotFoundException fırlat
+            if (totalCount == 0)
+                throw new NotFoundException(typeof(TEntity), input.Filter ?? string.Empty);
+
+            // 3. SkipCount toplam içerik sayısını aşarsa BusinessException fırlat
+            if (input.SkipCount >= totalCount)
+                throw new BusinessException(NewsManagement2DomainErrorCodes.InvalidFilterCriteria);
+
+            // 4. Varsayılan sıralama kriterini belirle
+            if (input.Sorting.IsNullOrWhiteSpace())
+                input.Sorting = nameof(ListableContent.Title); // Varsayılan sıralama başlık alanına göre yapılır
+
+            // 5. Belirtilen kriterlere uygun içerik listesini getir
+            var entityList = await _genericRepository.GetListAsync(input.SkipCount, input.MaxResultCount, input.Sorting, input.Filter);
+
+            // 6. İçerikleri DTO'ya dönüştür
+            var entityDtoList = _objectMapper.Map<List<TEntity>, List<TEntityDto>>(entityList);
+
+            // 7. Her içerik için ilişkili varlıkları getir
+            foreach (var entityDto in entityDtoList)
+            {
+                await GetCrossEntityAsync(entityDto);
+            }
+
+            // 8. Toplam içerik sayısı ve DTO listesini döndür
+            return new PagedResultDto<TEntityDto>(totalCount, entityDtoList);
+        }
+
+        #endregion
+        #region Listeleme Yardımcı Metotlar
+        /// <summary>
+        /// Listelenebilir bir içerik için ilgili tüm ilişkisel varlıkları (etiketler, şehirler, kategoriler ve ilişkili içerikler) oluşturur.
+        /// </summary>
+        /// <param name="createDto">Oluşturma işlemine ait DTO.</param>
+        /// <param name="listableContentId">Oluşturulan içeriğin ID'si.</param>
+        protected async Task CreateCrossEntity(TEntityCreateDto createDto, int listableContentId)
+        {
+            await CreateListableContentTagBaseAsync(createDto.TagIds, listableContentId);
+            await CreateListableContentCityBaseAsync(createDto.CityIds, listableContentId);
+            await CreateListableContentCategoryBaseAsync(createDto.ListableContentCategoryDtos, listableContentId);
+
+            if (createDto.RelatedListableContentIds != null)
+                await CreateListableContentRelationBaseAsync(createDto.RelatedListableContentIds, listableContentId);
+        }
+
+        /// <summary>
+        /// Güncellenen bir içerik için tüm ilişkisel varlıkları siler ve yeniden oluşturur.
+        /// </summary>
+        /// <param name="updateDto">Güncelleme işlemine ait DTO.</param>
+        /// <param name="listableContentId">Güncellenen içeriğin ID'si.</param>
+        protected async Task ReCreateCrossEntity(TEntityUpdateDto updateDto, int listableContentId)
+        {
+            await DeleteAllCrossEntitiesByListableContentId(listableContentId);
+
+            await CreateListableContentTagBaseAsync(updateDto.TagIds, listableContentId);
+            await CreateListableContentCityBaseAsync(updateDto.CityIds, listableContentId);
+            await CreateListableContentCategoryBaseAsync(updateDto.ListableContentCategoryDtos, listableContentId);
+
+            if (updateDto.RelatedListableContentIds != null)
+                await CreateListableContentRelationBaseAsync(updateDto.RelatedListableContentIds, listableContentId);
+        }
+
+
+
+  
+
+
+        /// <summary>
+        /// Verilen bir içeriğe ait tüm ilişkisel varlıkları (etiketler, şehirler, kategoriler ve ilişkili içerikler) veri tabanından siler.
+        /// </summary>
+        /// <param name="listableContentId">İlgili içeriğin ID'si.</param>
+        protected async Task DeleteAllCrossEntitiesByListableContentId(int listableContentId)
+        {
+            await _listableContentCategoryRepository.DeleteAsync(x => x.ListableContentId == listableContentId);
+            await _listableContentCityRepository.DeleteAsync(x => x.ListableContentId == listableContentId);
+            await _listableContentTagRepository.DeleteAsync(x => x.ListableContentId == listableContentId);
+            await _listableContentRelationRepository.DeleteAsync(x => x.ListableContentId == listableContentId);
+        }
+
+
+        /// <summary>
+        /// Verilen etiket ID'leri için ilişkisel etiket varlıklarını oluşturur.
+        /// </summary>
+        /// <param name="tagIds">Etiket ID'lerinin listesi.</param>
+        /// <param name="listableContentId">İlgili içeriğin ID'si.</param>
+        protected async Task CreateListableContentTagBaseAsync(List<int> tagIds, int listableContentId)
+        {
+            List<ListableContentTag> listableContentTags = new();
+            foreach (var tagId in tagIds)
+            {
+                var tag = new ListableContentTag { TagId = tagId, ListableContentId = listableContentId };
+                listableContentTags.Add(tag);
+            }
+
+            await _listableContentTagRepository.InsertManyAsync(listableContentTags, autoSave: true);
+        }
+
+
+        /// <summary>
+        /// Verilen şehir ID'leri için ilişkisel şehir varlıklarını oluşturur.
+        /// </summary>
+        /// <param name="cityIds">Şehir ID'lerinin listesi.</param>
+        /// <param name="listableContentId">İlgili içeriğin ID'si.</param>
+        protected async Task CreateListableContentCityBaseAsync(List<int> cityIds, int listableContentId)
+        {
+            List<ListableContentCity> listableContentCitis = new();
+            foreach (var cityId in cityIds)
+            {
+                var city = new ListableContentCity { CityId = cityId, ListableContentId = listableContentId };
+                listableContentCitis.Add(city);
+            }
+
+            await _listableContentCityRepository.InsertManyAsync(listableContentCitis, autoSave: true);
+        }
+
+
+
+        /// <summary>
+        /// Verilen ilişkili içerik ID'leri için ilişkisel içerik varlıklarını oluşturur.
+        /// </summary>
+        /// <param name="RelatedListableContentIds">İlişkili içerik ID'lerinin listesi.</param>
+        /// <param name="listableContentId">İlgili içeriğin ID'si.</param>
+        protected async Task CreateListableContentRelationBaseAsync(List<int> RelatedListableContentIds, int listableContentId)
+        {
+            List<ListableContentRelation> listableContentRelations = new();
+            foreach (var RelatedId in RelatedListableContentIds)
+            {
+                var listableContentRelation = new ListableContentRelation
+                {
+                    ListableContentId = listableContentId,
+                    RelatedListableContentId = RelatedId
+                };
+
+                listableContentRelations.Add(listableContentRelation);
+            }
+
+            await _listableContentRelationRepository.InsertManyAsync(listableContentRelations, autoSave: true);
+        }
+
+        /// <summary>
+        /// Verilen kategori DTO'ları için ilişkisel kategori varlıklarını oluşturur.
+        /// </summary>
+        /// <param name="listableContentCategoryDto">Kategori DTO'larının listesi.</param>
+        /// <param name="listableContentId">İlgili içeriğin ID'si.</param>
+        protected async Task CreateListableContentCategoryBaseAsync(List<ListableContentCategoryDto> listableContentCategoryDto, int listableContentId)
+        {
+            List<ListableContentCategory> listableContentCategories = new();
+            foreach (var item in listableContentCategoryDto)
+            {
+                var category = new ListableContentCategory { ListableContentId = listableContentId, CategoryId = item.CategoryId, IsPrimary = item.IsPrimary };
+                listableContentCategories.Add(category);
+            }
+
+            await _listableContentCategoryRepository.InsertManyAsync(listableContentCategories, autoSave: true);
+        }
+
+        /// <summary>
+        /// Mevcut ilişkili içerik varlıklarını siler ve yenilerini oluşturur.
+        /// </summary>
+        /// <param name="RelatedListableContentIds">Yeni ilişkili içerik ID'lerinin listesi.</param>
+        /// <param name="listableContentId">İlgili içeriğin ID'si.</param>
+        protected async Task ReCreateListableContentRelationBaseAsync(List<int> RelatedListableContentIds, int listableContentId)
+        {
+            var isExist = await _listableContentRelationRepository.GetListAsync(x => x.ListableContentId == listableContentId);
+
+            if (isExist.Count() != 0)
+                await _listableContentRelationRepository.DeleteManyAsync(isExist, autoSave: true);
+
+            await CreateListableContentRelationBaseAsync(RelatedListableContentIds, listableContentId);
+        }
+
+
+        #endregion
         #region Yardımcı Metotlar (Helper Methods)
 
         /// <summary>
