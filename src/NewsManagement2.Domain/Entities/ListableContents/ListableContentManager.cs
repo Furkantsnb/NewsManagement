@@ -13,5 +13,6 @@ namespace NewsManagement2.Entities.ListableContents
     /// </summary>
     public class ListableContentManager : DomainService
     {
+
     }
 }
