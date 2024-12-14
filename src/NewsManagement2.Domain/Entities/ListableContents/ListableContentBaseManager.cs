@@ -284,6 +284,21 @@ namespace NewsManagement2.Entities.ListableContents
 
             await _genericRepository.HardDeleteAsync(entity);
         }
+
+        protected async Task<TEntityDto> GetByIdBaseAsync(int id)
+        {
+            var entity = await _genericRepository.GetAsync(id);
+
+            entity.ViewsCount += 1;
+
+            await _genericRepository.UpdateAsync(entity);
+
+            var entityDto = _objectMapper.Map<TEntity, TEntityDto>(entity);
+
+            await GetCrossEntityAsync(entityDto);
+
+            return entityDto;
+        }
         #region Listeleme Yardımcı Metotlar
         /// <summary>
         /// Listelenebilir bir içerik için ilgili tüm ilişkisel varlıkları (etiketler, şehirler, kategoriler ve ilişkili içerikler) oluşturur.
