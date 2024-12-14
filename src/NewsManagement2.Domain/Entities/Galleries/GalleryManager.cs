@@ -6,6 +6,7 @@ using NewsManagement2.Entities.ListableContents;
 using NewsManagement2.Entities.Newses;
 using NewsManagement2.Entities.Tags;
 using NewsManagement2.Entities.Videos;
+using NewsManagement2.EntityDtos.GalleryDtos;
 using NewsManagement2.EntityDtos.PagedAndSortedDto;
 using System;
 using System.Collections.Generic;
@@ -78,3 +79,4 @@ namespace NewsManagement2.Entities.Galleries
         }
 
     }
+}
