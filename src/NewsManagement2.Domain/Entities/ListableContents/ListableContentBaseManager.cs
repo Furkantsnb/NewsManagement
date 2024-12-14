@@ -23,6 +23,7 @@ using Volo.Abp.Application.Dtos;
 using NewsManagement2.EntityDtos.CategoryDtos;
 using NewsManagement2.EntityDtos.CityDtos;
 using NewsManagement2.EntityDtos.TagDtos;
+using Volo.Abp.Domain.Entities;
 
 namespace NewsManagement2.Entities.ListableContents
 {
@@ -271,6 +272,12 @@ namespace NewsManagement2.Entities.ListableContents
         }
 
         #endregion
+        protected async Task CheckDeleteInputBaseAsync(int id)
+        {
+            var isExist = await _genericRepository.AnyAsync(t => t.Id == id);
+            if (!isExist)
+                throw new EntityNotFoundException(typeof(TEntity), id);
+        }
         #region Listeleme Yardımcı Metotlar
         /// <summary>
         /// Listelenebilir bir içerik için ilgili tüm ilişkisel varlıkları (etiketler, şehirler, kategoriler ve ilişkili içerikler) oluşturur.
