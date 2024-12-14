@@ -278,6 +278,12 @@ namespace NewsManagement2.Entities.ListableContents
             if (!isExist)
                 throw new EntityNotFoundException(typeof(TEntity), id);
         }
+        protected async Task CheckDeleteHardInputBaseAsync(int id)
+        {
+            var entity = await _genericRepository.GetAsync(id);
+
+            await _genericRepository.HardDeleteAsync(entity);
+        }
         #region Listeleme Yardımcı Metotlar
         /// <summary>
         /// Listelenebilir bir içerik için ilgili tüm ilişkisel varlıkları (etiketler, şehirler, kategoriler ve ilişkili içerikler) oluşturur.
