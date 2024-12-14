@@ -38,6 +38,7 @@
     "NewsManagement2:433": "Planlanan zaman gelecekte olmalı.",
     "NewsManagement2:434": "Yayınlanan durum için tarih/saat 'şu an' olmalı.",
     "NewsManagement2:435": "Silinmiş durum düzenlenemez.",
+    "NewsManagement:436": "Tekrarlanan veri hatası. İndeks : {0} , Tekrarlanan : {1}",
 
     // Video ve Link Hataları
     "NewsManagement2:440": "Link türü içeriklerde URL gerekli.",

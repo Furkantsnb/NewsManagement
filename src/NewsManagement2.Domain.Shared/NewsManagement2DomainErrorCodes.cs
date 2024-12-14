@@ -35,6 +35,8 @@ public static class NewsManagement2DomainErrorCodes
     public const string InvalidScheduledPublishTime = "NewsManagement2:433"; // Planlanan zaman gelecekte olmalı
     public const string InvalidPublishedTime = "NewsManagement2:434"; // Yayınlanan durum "şu an" olmalı
     public const string DeletedStatusCannotBeModified = "NewsManagement2:435"; // Silinmiş durum düzenlenemez
+    public const string RepeatedDataError = "NewsManagement:436";
+
 
     // Video ve Link Hataları
     public const string UrlRequiredForLinkContent = "NewsManagement2:440"; // Link türü içeriklerde URL gerekli
