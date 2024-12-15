@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
@@ -36,6 +37,10 @@ namespace NewsManagement2.AppService.Galleries
         public async override Task<GalleryDto> GetAsync(int id)
         {
             return await _galleryManager.GetByIdAsync(id);
+        }
+        public async override Task<PagedResultDto<GalleryDto>> GetListAsync(GetListPagedAndSortedDto input)
+        {
+            return await _galleryManager.GetListAsync(input);
         }
         public Task DeleteHardAsync(int id)
         {
