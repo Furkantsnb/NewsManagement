@@ -15,7 +15,7 @@ namespace NewsManagement2.FluentValidations.Gallery
         {
             Include(new UpdateListableContentDtoValidator(localizer));
 
-          
+            RuleFor(x => x.GalleryImages).ForEach(x => x.SetValidator(new GalleryImageDtoValidator()));
 
         }
     }
