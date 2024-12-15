@@ -21,7 +21,13 @@ namespace NewsManagement2.AppService.Galleries
         public GalleryAppService(IRepository<Gallery, int> repository, GalleryManager galleryManager) : base(repository)
         {
             _galleryManager = galleryManager;
-        }     
+        }
+
+        [Authorize(NewsManagement2Permissions.Galleries.Create)]
+        public override async Task<GalleryDto> CreateAsync(CreateGalleryDto createGalleryDto)
+        {
+            return await _galleryManager.CreateAsync(createGalleryDto);
+        }
         public Task DeleteHardAsync(int id)
         {
             throw new NotImplementedException();
