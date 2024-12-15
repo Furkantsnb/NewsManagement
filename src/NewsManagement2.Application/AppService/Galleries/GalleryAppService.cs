@@ -21,7 +21,7 @@ namespace NewsManagement2.AppService.Galleries
         public GalleryAppService(IRepository<Gallery, int> repository, GalleryManager galleryManager) : base(repository)
         {
             _galleryManager = galleryManager;
-        }
+        }     
         public Task DeleteHardAsync(int id)
         {
             throw new NotImplementedException();
