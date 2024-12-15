@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Features;
 
 namespace NewsManagement2.AppService.Galleries
 {
@@ -49,9 +50,12 @@ namespace NewsManagement2.AppService.Galleries
 
             await base.DeleteAsync(id);
         }
-        public Task DeleteHardAsync(int id)
+
+        [RequiresFeature("NewsApp.Gallery")]
+        [Authorize(NewsManagement2Permissions.Galleries.Delete)]
+        public async  Task DeleteHardAsync(int id)
         {
-            throw new NotImplementedException();
+            await _galleryManager.DeleteHardAsync(id);
         }
     }
 }
