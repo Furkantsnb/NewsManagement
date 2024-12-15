@@ -33,6 +33,10 @@ namespace NewsManagement2.AppService.Galleries
         {
             return await _galleryManager.UpdateAsync(id, updateGalleryDto);
         }
+        public async override Task<GalleryDto> GetAsync(int id)
+        {
+            return await _galleryManager.GetByIdAsync(id);
+        }
         public Task DeleteHardAsync(int id)
         {
             throw new NotImplementedException();
