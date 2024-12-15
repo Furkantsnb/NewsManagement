@@ -110,6 +110,25 @@ namespace NewsManagement2.Entities.Galleries
 
             return galleryDto;
         }
+
+        /// <summary>
+        /// Belirtilen galeriyi siler.
+        /// </summary>
+        /// <param name="id">Silinecek galerinin ID'si.</param>
+        public async Task DeleteAsync(int id)
+        {
+            await CheckDeleteInputBaseAsync(id);
+        }
+
+        /// <summary>
+        /// Belirtilen galeriyi veri tabanından tamamen siler.
+        /// </summary>
+        /// <param name="id">Silinecek galerinin ID'si.</param>
+        public async Task DeleteHardAsync(int id)
+        {
+            await CheckDeleteHardInputBaseAsync(id);
+        }
+
         public void CheckOrderInput(List<int> input)
         {
             input.Sort();
