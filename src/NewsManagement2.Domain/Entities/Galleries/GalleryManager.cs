@@ -112,6 +112,22 @@ namespace NewsManagement2.Entities.Galleries
         }
 
         /// <summary>
+        /// Verilen bir ID'ye sahip galeriyi getirir ve ilişkisel resimlerini ekler.
+        /// </summary>
+        /// <param name="id">Galeri ID'si.</param>
+        /// <returns>Galeri DTO'su.</returns>
+        public async Task<GalleryDto> GetByIdAsync(int id)
+        {
+            var gallery = await GetByIdBaseAsync(id);
+
+            var galleryImage = await _galleryImageRepository.GetListAsync(x => x.GalleryId == gallery.Id);
+            gallery.GalleryImages = _objectMapper.Map<List<GalleryImage>, List<GalleryImageDto>>(galleryImage);
+
+            return gallery;
+        }
+
+
+        /// <summary>
         /// Belirtilen galeriyi siler.
         /// </summary>
         /// <param name="id">Silinecek galerinin ID'si.</param>
