@@ -183,19 +183,32 @@ namespace NewsManagement2.Entities.Galleries
             await CheckDeleteHardInputBaseAsync(id);
         }
 
+        /// <summary>
+        /// Sıra (order) numaralarını kontrol eder ve doğruluğunu sağlar.
+        /// - Girilen sıralama numaralarının 1'den başlayarak artan sırada olduğunu kontrol eder.
+        /// - Eğer sıralama geçerli değilse, bir iş kuralı hatası fırlatır.
+        /// </summary>
+        /// <param name="input">Kontrol edilecek sıralama numaralarının listesi.</param>
+        /// <exception cref="BusinessException">
+        /// Eğer sıralama numaraları 1'den başlayarak ardışık bir şekilde değilse, 
+        /// <see cref="NewsManagement2DomainErrorCodes.SortingParameterInvalid"/> hatasını fırlatır.
+        /// </exception>
         public void CheckOrderInput(List<int> input)
         {
+            // 1. Sıralama numaralarını küçükten büyüğe sırala
             input.Sort();
 
+            // 2. Her bir sıranın ardışık olarak 1'den başlayıp başlamadığını kontrol et
             for (int i = 0; i < input.Count; i++)
             {
+                // Beklenen sıra numarası 1'den başlayarak artar (i+1)
                 if (input[i] != i + 1)
                 {
+                    // Eğer sıra numarası beklenenden farklıysa hata fırlat
                     throw new BusinessException(NewsManagement2DomainErrorCodes.SortingParameterInvalid)
-                      .WithData("0", input[i].ToString());
+                        .WithData("0", input[i].ToString());
                 }
             }
-
         }
     }
 }
