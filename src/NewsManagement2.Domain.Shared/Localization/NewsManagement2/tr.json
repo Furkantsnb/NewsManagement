@@ -47,7 +47,7 @@
     "NewsManagement2:443": "Link türü içeriklerde VideoId olamaz.",
 
     // Sıralama ve Filtreleme Hataları
-    "NewsManagement2:450": "Geçersiz sıralama parametresi.",
+    "NewsManagement2:450": "Geçersiz sıralama parametresi. Index : {0}",
     "NewsManagement2:451": "Çok fazla öğe atlandı.",
 
     // Doğrulama Hataları (Validation Errors)

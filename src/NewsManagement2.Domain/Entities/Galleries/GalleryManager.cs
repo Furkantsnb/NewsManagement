@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
 
@@ -77,6 +78,51 @@ namespace NewsManagement2.Entities.Galleries
             _listableContentCategoryRepository = listableContentCategoryRepository;
             _listableContentRelationRepository = listableContentRelationRepository;
         }
+        /// <summary>
+        /// Yeni bir galeri oluşturur ve ilişkisel varlıkları (resimler, etiketler, şehirler ve kategoriler) ekler.
+        /// </summary>
+        /// <param name="createGalleryDto">Oluşturulacak galeriye ait DTO.</param>
+        /// <returns>Oluşturulan galerinin DTO'sunu döndürür.</returns>
+        public async Task<GalleryDto> CreateAsync(CreateGalleryDto createGalleryDto)
+        {
+            // 1. Girdilerin doğruluğunu kontrol eder
+            var creatingGallery = await CheckCreateInputBaseAsync(createGalleryDto);
 
+            // 2. Resim sırasını kontrol eder
+            var orders = createGalleryDto.GalleryImages.Select(x => x.Order).ToList();
+            CheckOrderInput(orders);
+
+            // 3. Resimlerin varlığını kontrol eder
+            foreach (var galleryImage in creatingGallery.GalleryImages)
+            {
+                var images = _fileRepository.GetAsync(galleryImage.ImageId).Result;
+            }
+
+            // 4. Galeriyi veri tabanına ekler
+            var gallery = await _genericRepository.InsertAsync(creatingGallery, autoSave: true);
+
+            // 5. İlişkisel varlıkları oluşturur
+            await CreateCrossEntity(createGalleryDto, gallery.Id);
+
+            // 6. DTO'ya dönüştürür ve ilişkisel varlıkları ekler
+            var galleryDto = _objectMapper.Map<Gallery, GalleryDto>(gallery);
+            await GetCrossEntityAsync(galleryDto);
+
+            return galleryDto;
+        }
+        public void CheckOrderInput(List<int> input)
+        {
+            input.Sort();
+
+            for (int i = 0; i < input.Count; i++)
+            {
+                if (input[i] != i + 1)
+                {
+                    throw new BusinessException(NewsManagement2DomainErrorCodes.SortingParameterInvalid)
+                      .WithData("0", input[i].ToString());
+                }
+            }
+
+        }
     }
 }

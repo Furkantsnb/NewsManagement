@@ -47,7 +47,7 @@
     "NewsManagement2:443": "VideoId is not allowed for link content.",
 
     // Sorting and Filtering Errors
-    "NewsManagement2:450": "Invalid sorting parameter.",
+    "NewsManagement2:450": "Invalid sorting parameter. Index : {0}",
     "NewsManagement2:451": "Too many items were skipped.",
 
     // Validation Errors
