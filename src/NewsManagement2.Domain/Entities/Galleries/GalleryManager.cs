@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
 
@@ -162,6 +163,26 @@ namespace NewsManagement2.Entities.Galleries
             gallery.GalleryImages = _objectMapper.Map<List<GalleryImage>, List<GalleryImageDto>>(galleryImage);
 
             return gallery;
+        }
+
+        /// <summary>
+        /// Belirtilen filtre ve sayfalama kriterlerine göre galeri listesini getirir.
+        /// </summary>
+        /// <param name="input">Filtreleme ve sayfalama için DTO.</param>
+        /// <returns>Sayfalama destekli galeri DTO listesi.</returns>
+        public async Task<PagedResultDto<GalleryDto>> GetListAsync(GetListPagedAndSortedDto input)
+        {
+            // 1. Filtrelenmiş galeri listesini getirir
+            var filteredList = await GetListFilterBaseAsync(input);
+
+            // 2. Her galeri için ilişkisel resimleri ekler
+            foreach (var item in filteredList.Items.ToList())
+            {
+                var galleryImage = await _galleryImageRepository.GetListAsync(x => x.GalleryId == item.Id);
+                item.GalleryImages = _objectMapper.Map<List<GalleryImage>, List<GalleryImageDto>>(galleryImage);
+            }
+
+            return filteredList;
         }
 
 
