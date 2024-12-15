@@ -28,6 +28,11 @@ namespace NewsManagement2.AppService.Galleries
         {
             return await _galleryManager.CreateAsync(createGalleryDto);
         }
+        [Authorize(NewsManagement2Permissions.Galleries.Edit)]
+        public async override Task<GalleryDto> UpdateAsync(int id, UpdateGalleryDto updateGalleryDto)
+        {
+            return await _galleryManager.UpdateAsync(id, updateGalleryDto);
+        }
         public Task DeleteHardAsync(int id)
         {
             throw new NotImplementedException();
