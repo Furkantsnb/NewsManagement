@@ -112,6 +112,44 @@ namespace NewsManagement2.Entities.Galleries
         }
 
         /// <summary>
+        /// Mevcut bir galeriyi günceller ve ilişkisel varlıkları yeniden oluşturur.
+        /// </summary>
+        /// <param name="id">Güncellenecek galerinin ID'si.</param>
+        /// <param name="updateGalleryDto">Güncelleme işlemine ait DTO.</param>
+        /// <returns>Güncellenen galerinin DTO'sunu döndürür.</returns>
+        public async Task<GalleryDto> UpdateAsync(int id, UpdateGalleryDto updateGalleryDto)
+        {
+            // 1. Girdilerin doğruluğunu kontrol eder
+            var updatingGallery = await CheckUpdateInputBaseAsync(id, updateGalleryDto);
+
+            // 2. Resim sırasını kontrol eder
+            var orders = updateGalleryDto.GalleryImages.Select(x => x.Order).ToList();
+            CheckOrderInput(orders);
+
+            // 3. Resimlerin varlığını kontrol eder
+            foreach (var galleryImage in updatingGallery.GalleryImages)
+            {
+                var images = _fileRepository.GetAsync(galleryImage.ImageId).Result;
+            }
+
+            // 4. Mevcut ilişkisel resimleri siler
+            await _galleryImageRepository.DeleteAsync(x => x.GalleryId == id);
+
+            // 5. Galeriyi günceller
+            var gallery = await _genericRepository.UpdateAsync(updatingGallery, autoSave: true);
+
+            // 6. İlişkisel varlıkları yeniden oluşturur
+            await ReCreateCrossEntity(updateGalleryDto, gallery.Id);
+
+            // 7. DTO'ya dönüştürür ve ilişkisel varlıkları ekler
+            var galleryDto = _objectMapper.Map<Gallery, GalleryDto>(gallery);
+            await GetCrossEntityAsync(galleryDto);
+
+            return galleryDto;
+        }
+
+
+        /// <summary>
         /// Verilen bir ID'ye sahip galeriyi getirir ve ilişkisel resimlerini ekler.
         /// </summary>
         /// <param name="id">Galeri ID'si.</param>
