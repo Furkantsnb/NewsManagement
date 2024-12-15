@@ -42,6 +42,13 @@ namespace NewsManagement2.AppService.Galleries
         {
             return await _galleryManager.GetListAsync(input);
         }
+        [Authorize(NewsManagement2Permissions.Galleries.Delete)]
+        public override async Task DeleteAsync(int id)
+        {
+            await _galleryManager.DeleteAsync(id);
+
+            await base.DeleteAsync(id);
+        }
         public Task DeleteHardAsync(int id)
         {
             throw new NotImplementedException();
