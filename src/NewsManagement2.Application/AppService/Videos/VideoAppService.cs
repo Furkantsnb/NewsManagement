@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Features;
 
 namespace NewsManagement2.AppService.Videos
 {
@@ -27,6 +29,11 @@ namespace NewsManagement2.AppService.Videos
         public async override Task<VideoDto> UpdateAsync(int id, UpdateVideoDto updateVideoDto)
         {
             return await _videoManager.UpdateAsync(id, updateVideoDto);
+        }
+        [RequiresFeature("NewsApp.Video")]
+        public async override Task<PagedResultDto<VideoDto>> GetListAsync(GetListPagedAndSortedDto input)
+        {
+            return await _videoManager.GetListAsync(input);
         }
         public async override Task<VideoDto> GetAsync(int id)
         {
