@@ -1,4 +1,4 @@
-﻿using AutoMapper.Internal.Mappers;
+﻿
 using EasyAbp.FileManagement.Files;
 using NewsManagement2.Entities.Categories;
 using NewsManagement2.Entities.Cities;
@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.ObjectMapping;
 
 namespace NewsManagement2.Entities.Videos
 {
@@ -72,6 +73,11 @@ namespace NewsManagement2.Entities.Videos
             _listableContentCityRepository = listableContentCityRepository;
             _listableContentCategoryRepository = listableContentCategoryRepository;
             _listableContentRelationRepository = listableContentRelationRepository;
+        }
+
+        public async Task DeleteHardAsync(int id)
+        {
+            await CheckDeleteHardInputBaseAsync(id);
         }
     }
 }
