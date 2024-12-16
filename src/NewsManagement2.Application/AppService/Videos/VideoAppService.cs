@@ -45,9 +45,9 @@ namespace NewsManagement2.AppService.Videos
 
             await base.DeleteAsync(id);
         }
-        public Task DeleteHardAsync(int id)
+        public async Task DeleteHardAsync(int id)
         {
-            throw new NotImplementedException();
+            await _videoManager.DeleteHardAsync(id);
         }
     }
 }
