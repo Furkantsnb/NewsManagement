@@ -28,6 +28,10 @@ namespace NewsManagement2.AppService.Videos
         {
             return await _videoManager.UpdateAsync(id, updateVideoDto);
         }
+        public async override Task<VideoDto> GetAsync(int id)
+        {
+            return await _videoManager.GetByIdAsync(id);
+        }
         public Task DeleteHardAsync(int id)
         {
             throw new NotImplementedException();
