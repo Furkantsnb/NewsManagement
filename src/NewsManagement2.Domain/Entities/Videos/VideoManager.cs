@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.ObjectMapping;
 
 namespace NewsManagement2.Entities.Videos
@@ -74,6 +75,18 @@ namespace NewsManagement2.Entities.Videos
             _listableContentCategoryRepository = listableContentCategoryRepository;
             _listableContentRelationRepository = listableContentRelationRepository;
         }
+
+
+        /// <summary>
+        /// Belirtilen filtre ve sayfalama kriterlerine göre video listesini döndürür.
+        /// </summary>
+        /// <param name="input">Filtreleme ve sayfalama bilgileri.</param>
+        /// <returns>Sayfalama destekli video DTO listesi.</returns>
+        public async Task<PagedResultDto<VideoDto>> GetListAsync(GetListPagedAndSortedDto input)
+        {
+            return await GetListFilterBaseAsync(input);
+        }
+
         /// <summary>
         /// Verilen ID'ye sahip videoyu döndürür.
         /// </summary>
