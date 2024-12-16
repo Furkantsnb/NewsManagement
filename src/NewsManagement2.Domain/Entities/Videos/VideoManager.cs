@@ -74,6 +74,17 @@ namespace NewsManagement2.Entities.Videos
             _listableContentCategoryRepository = listableContentCategoryRepository;
             _listableContentRelationRepository = listableContentRelationRepository;
         }
+        /// <summary>
+        /// Verilen ID'ye sahip videoyu döndürür.
+        /// </summary>
+        /// <param name="id">Video ID'si.</param>
+        /// <returns>Video DTO'su.</returns>
+        public async Task<VideoDto> GetByIdAsync(int id)
+        {
+            var video = await GetByIdBaseAsync(id);
+            return video;
+        }
+
         public async Task DeleteAsync(int id)
         {
             await CheckDeleteInputBaseAsync(id);
