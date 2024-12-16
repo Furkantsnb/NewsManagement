@@ -77,6 +77,57 @@ namespace NewsManagement2.Entities.Videos
             _listableContentCategoryRepository = listableContentCategoryRepository;
             _listableContentRelationRepository = listableContentRelationRepository;
         }
+
+        /// <summary>
+        /// Yeni bir video oluşturur ve ilişkisel varlıkları ekler.
+        /// - Video türüne (Video veya Link) göre özel doğrulamalar yapar.
+        /// </summary>
+        /// <param name="createVideoDto">Oluşturulacak videoya ait DTO.</param>
+        /// <returns>Oluşturulan videonun DTO'su.</returns>
+        /// <exception cref="BusinessException">
+        /// - Eğer VideoType "Video" ise VideoId boş olamaz.
+        /// - Eğer VideoType "Link" ise URL boş olamaz.
+        /// </exception>
+        public async Task<VideoDto> CreateAsync(CreateVideoDto createVideoDto)
+        {
+            // 1. Girdilerin doğruluğunu kontrol eder
+            var creatingVideo = await CheckCreateInputBaseAsync(createVideoDto);
+
+            // 2. Video türüne göre özel doğrulamalar yapar
+            if (creatingVideo.VideoType == VideoType.Video)
+            {
+                if (creatingVideo.VideoId == null)
+                    throw new BusinessException(NewsManagement2DomainErrorCodes.VideoIdRequiredForVideoContent);
+
+                if (creatingVideo.Url != null)
+                    throw new BusinessException(NewsManagement2DomainErrorCodes.UrlNotAllowedForVideoContent);
+
+                var images = _fileRepository.GetAsync((Guid)creatingVideo.VideoId).Result;
+            }
+
+            if (creatingVideo.VideoType == VideoType.Link)
+            {
+                if (creatingVideo.Url == null)
+                    throw new BusinessException(NewsManagement2DomainErrorCodes.UrlRequiredForLinkContent);
+
+                if (creatingVideo.VideoId != null)
+                    throw new BusinessException(NewsManagement2DomainErrorCodes.VideoIdNotAllowedForLinkContent);
+            }
+
+            // 3. Video kaydını veri tabanına ekler
+            var video = await _genericRepository.InsertAsync(creatingVideo, autoSave: true);
+
+            // 4. İlişkisel varlıkları ekler
+            await CreateCrossEntity(createVideoDto, video.Id);
+
+            // 5. DTO'ya dönüştürür ve döndürür
+            var videoDto = _objectMapper.Map<Video, VideoDto>(video);
+            await GetCrossEntityAsync(videoDto);
+
+            return videoDto;
+        }
+
+
         /// <summary>
         /// Mevcut bir videoyu günceller ve ilişkisel varlıkları yeniden oluşturur.
         /// </summary>
