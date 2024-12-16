@@ -7,6 +7,7 @@ using NewsManagement2.Entities.ListableContentRelations;
 using NewsManagement2.Entities.ListableContents;
 using NewsManagement2.Entities.Newses;
 using NewsManagement2.Entities.Tags;
+using NewsManagement2.EntityConsts.VideoConsts;
 using NewsManagement2.EntityDtos.PagedAndSortedDto;
 using NewsManagement2.EntityDtos.VideoDtos;
 using NewsManagement2.EntityDtos.Videos;
@@ -15,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.ObjectMapping;
 
@@ -74,6 +76,47 @@ namespace NewsManagement2.Entities.Videos
             _listableContentCityRepository = listableContentCityRepository;
             _listableContentCategoryRepository = listableContentCategoryRepository;
             _listableContentRelationRepository = listableContentRelationRepository;
+        }
+        /// <summary>
+        /// Mevcut bir videoyu günceller ve ilişkisel varlıkları yeniden oluşturur.
+        /// </summary>
+        /// <param name="id">Güncellenecek videonun ID'si.</param>
+        /// <param name="updateVideoDto">Güncelleme işlemine ait DTO.</param>
+        /// <returns>Güncellenen videonun DTO'su.</returns>
+        /// <exception cref="BusinessException">
+        /// - Video türüne göre aynı doğrulama kuralları geçerlidir.
+        /// </exception>
+        public async Task<VideoDto> UpdateAsync(int id, UpdateVideoDto updateVideoDto)
+        {
+            var updatingVideo = await CheckUpdateInputBaseAsync(id, updateVideoDto);
+
+            if (updatingVideo.VideoType == VideoType.Video)
+            {
+                if (updatingVideo.VideoId == null)
+                    throw new BusinessException(NewsManagement2DomainErrorCodes.VideoIdRequiredForVideoContent);
+
+                if (updatingVideo.Url != null)
+                    throw new BusinessException(NewsManagement2DomainErrorCodes.UrlNotAllowedForVideoContent);
+
+                var images = _fileRepository.GetAsync((Guid)updatingVideo.VideoId).Result;
+            }
+
+            if (updatingVideo.VideoType == VideoType.Link)
+            {
+                if (updatingVideo.Url == null)
+                    throw new BusinessException(NewsManagement2DomainErrorCodes.UrlRequiredForLinkContent);
+
+                if (updatingVideo.VideoId != null)
+                    throw new BusinessException(NewsManagement2DomainErrorCodes.VideoIdNotAllowedForLinkContent);
+            }
+
+            var video = await _genericRepository.UpdateAsync(updatingVideo, autoSave: true);
+            await ReCreateCrossEntity(updateVideoDto, video.Id);
+
+            var videoDto = _objectMapper.Map<Video, VideoDto>(video);
+            await GetCrossEntityAsync(videoDto);
+
+            return videoDto;
         }
 
 
