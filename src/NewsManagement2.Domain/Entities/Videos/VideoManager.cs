@@ -8,6 +8,7 @@ using NewsManagement2.Entities.ListableContents;
 using NewsManagement2.Entities.Newses;
 using NewsManagement2.Entities.Tags;
 using NewsManagement2.EntityDtos.PagedAndSortedDto;
+using NewsManagement2.EntityDtos.Videos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
