@@ -74,7 +74,10 @@ namespace NewsManagement2.Entities.Videos
             _listableContentCategoryRepository = listableContentCategoryRepository;
             _listableContentRelationRepository = listableContentRelationRepository;
         }
-
+        public async Task DeleteAsync(int id)
+        {
+            await CheckDeleteInputBaseAsync(id);
+        }
         public async Task DeleteHardAsync(int id)
         {
             await CheckDeleteHardInputBaseAsync(id);
