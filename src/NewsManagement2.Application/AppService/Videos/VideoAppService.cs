@@ -20,6 +20,10 @@ namespace NewsManagement2.AppService.Videos
         {
             _videoManager = videoManager;
         }
+        public override async Task<VideoDto> CreateAsync(CreateVideoDto createVideoDto)
+        {
+            return await _videoManager.CreateAsync(createVideoDto);
+        }
 
         public Task DeleteHardAsync(int id)
         {
