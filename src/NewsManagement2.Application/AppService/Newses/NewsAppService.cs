@@ -27,6 +27,11 @@ namespace NewsManagement2.AppService.Newses
         {
             return await _newsManager.CreateAsync(createNewsDto);
         }
+        [Authorize(NewsManagement2Permissions.Newses.Edit)]
+        public async override Task<NewsDto> UpdateAsync(int id, UpdateNewsDto updateNewsDto)
+        {
+            return await _newsManager.UpdateAsync(id, updateNewsDto);
+        }
         public Task DeleteHardAsync(int id)
         {
             throw new NotImplementedException();
