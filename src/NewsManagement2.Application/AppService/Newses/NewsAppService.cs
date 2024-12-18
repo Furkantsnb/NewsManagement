@@ -49,9 +49,11 @@ namespace NewsManagement2.AppService.Newses
 
             await base.DeleteAsync(id);
         }
-        public Task DeleteHardAsync(int id)
+
+        [Authorize(NewsManagement2Permissions.Newses.Delete)]
+        public async Task DeleteHardAsync(int id)
         {
-            throw new NotImplementedException();
+            await _newsManager.DeleteHardAsync(id);
         }
     }
 }
