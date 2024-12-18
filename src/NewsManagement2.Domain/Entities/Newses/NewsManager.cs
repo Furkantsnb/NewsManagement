@@ -97,6 +97,26 @@ namespace NewsManagement2.Entities.Newses
 
             return newsDto;
         }
+        public async Task<NewsDto> UpdateAsync(int id, UpdateNewsDto updateNewsDto)
+        {
+            var updatingNews = await CheckUpdateInputBaseAsync(id, updateNewsDto);
+
+            foreach (var imageId in updatingNews.DetailImageIds)
+            {
+                var images = _fileRepository.GetAsync(imageId.DetailImageId).Result;
+            }
+
+            await _newsDetailImageRepository.DeleteAsync(x => x.NewsId == id);
+            var news = await _genericRepository.UpdateAsync(updatingNews, autoSave: true);
+
+            await ReCreateCrossEntity(updateNewsDto, news.Id);
+
+            var newsDto = _objectMapper.Map<News, NewsDto>(news);
+
+            await GetCrossEntityAsync(newsDto);
+
+            return newsDto;
+        }
         public async Task<PagedResultDto<NewsDto>> GetListAsync(GetListPagedAndSortedDto input)
         {
             var filteredList = await GetListFilterBaseAsync(input);
