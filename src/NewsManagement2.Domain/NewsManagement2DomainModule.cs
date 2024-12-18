@@ -1,4 +1,4 @@
-﻿using EasyAbp.FileManagement;
+using EasyAbp.FileManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NewsManagement2.MultiTenancy;
@@ -16,6 +16,11 @@ using Volo.Abp.PermissionManagement.Identity;
 using Volo.Abp.PermissionManagement.OpenIddict;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+using Volo.Abp.BackgroundJobs.Hangfire;
+using Volo.Abp.Hangfire;
+using Hangfire.PostgreSql;
+using Hangfire;
+using Microsoft.Extensions.Configuration;
 
 namespace NewsManagement2;
 
@@ -33,10 +38,12 @@ namespace NewsManagement2;
     typeof(AbpEmailingModule),
      typeof(FileManagementDomainModule)
 )]
-public class NewsManagement2DomainModule : AbpModule
+[DependsOn(typeof(AbpBackgroundJobsHangfireModule), typeof(AbpHangfireModule))]
+    public class NewsManagement2DomainModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+        var configuration = context.Services.GetConfiguration();
         Configure<AbpLocalizationOptions>(options =>
         {
             options.Languages.Add(new LanguageInfo("ar", "ar", "العربية", "ae"));
@@ -66,8 +73,16 @@ public class NewsManagement2DomainModule : AbpModule
 
 
 
+
 #if DEBUG
         context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 #endif
+
+        context.Services.AddHangfire(config =>
+        {
+            config.UsePostgreSqlStorage(configuration.GetConnectionString("Default"));
+        });
+
+        context.Services.AddHangfireServer();
     }
 }

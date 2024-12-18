@@ -45,6 +45,8 @@ using EasyAbp.FileManagement.Containers;
 using EasyAbp.FileManagement.Files;
 using EasyAbp.FileManagement.Options;
 using Volo.Abp.BackgroundJobs.Hangfire;
+using Hangfire;
+using NewsManagement2.Entities.BackgroundJobs;
 
 namespace NewsManagement2.Web;
 
@@ -265,6 +267,12 @@ namespace NewsManagement2.Web;
         });
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
+
+        RecurringJob.AddOrUpdate<UpdateScheduledStatusJob>(
+           "ChangingStatusTypeJob",
+            job => job.ExecuteAsync(0),
+          Cron.MinuteInterval(1)
+        );
         app.UseConfiguredEndpoints();
     }
 }
