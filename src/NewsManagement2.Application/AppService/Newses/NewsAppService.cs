@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
@@ -31,6 +32,10 @@ namespace NewsManagement2.AppService.Newses
         public async override Task<NewsDto> UpdateAsync(int id, UpdateNewsDto updateNewsDto)
         {
             return await _newsManager.UpdateAsync(id, updateNewsDto);
+        }
+        public async override Task<PagedResultDto<NewsDto>> GetListAsync(GetListPagedAndSortedDto input)
+        {
+            return await _newsManager.GetListAsync(input);
         }
         public async override Task<NewsDto> GetAsync(int id)
         {
