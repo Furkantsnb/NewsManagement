@@ -7,6 +7,6 @@ namespace NewsManagement2.EntityDtos.Newses
 {
     public class CreateNewsDto : CreateListableContentDto
     {
-      
+        public List<NewsDetailImageDto> DetailImageIds { get; set; }
     }
 }
