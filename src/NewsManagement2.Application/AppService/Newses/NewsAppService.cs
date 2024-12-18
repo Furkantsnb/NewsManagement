@@ -22,7 +22,11 @@ namespace NewsManagement2.AppService.Newses
         {
             _newsManager = newsManager;
         }
-
+        [Authorize(NewsManagement2Permissions.Newses.Create)]
+        public override async Task<NewsDto> CreateAsync(CreateNewsDto createNewsDto)
+        {
+            return await _newsManager.CreateAsync(createNewsDto);
+        }
         public Task DeleteHardAsync(int id)
         {
             throw new NotImplementedException();
