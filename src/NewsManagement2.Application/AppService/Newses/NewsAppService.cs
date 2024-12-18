@@ -32,6 +32,10 @@ namespace NewsManagement2.AppService.Newses
         {
             return await _newsManager.UpdateAsync(id, updateNewsDto);
         }
+        public async override Task<NewsDto> GetAsync(int id)
+        {
+            return await _newsManager.GetByIdAsync(id);
+        }
         public Task DeleteHardAsync(int id)
         {
             throw new NotImplementedException();
