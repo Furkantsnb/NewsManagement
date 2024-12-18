@@ -1,6 +1,7 @@
 ﻿using NewsManagement2.Entities.Galleries;
 using NewsManagement2.Entities.Newses;
 using NewsManagement2.Entities.Videos;
+using NewsManagement2.EntityDtos.ListableContentDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,29 @@ namespace NewsManagement2.Entities.ListableContents
             _listableContentRepository = listableContentRepository;
 
         }
+        public async Task<ListableContentDto> GetByIdAsync(int id)
+        {
+            var listableContent = await _listableContentRepository.GetAsync(id);
 
+            ListableContentDto dto = null;
+
+            if (listableContent is Gallery)
+            {
+                dto = await _galleryManager.GetByIdAsync(id);
+            }
+
+            if (listableContent is News)
+            {
+                dto = await _newsManager.GetByIdAsync(id);
+            }
+
+            if (listableContent is Video)
+            {
+                dto = await _videoManager.GetByIdAsync(id);
+            }
+
+            return dto;
+        }
 
     }
 }
