@@ -44,6 +44,7 @@ using EasyAbp.FileManagement;
 using EasyAbp.FileManagement.Containers;
 using EasyAbp.FileManagement.Files;
 using EasyAbp.FileManagement.Options;
+using Volo.Abp.BackgroundJobs.Hangfire;
 
 namespace NewsManagement2.Web;
 
@@ -62,6 +63,7 @@ namespace NewsManagement2.Web;
     typeof(AbpSwashbuckleModule)
     )]
 [DependsOn(typeof(AbpBlobStoringMinioModule))]
+    [DependsOn(typeof(AbpBackgroundJobsHangfireModule))]
     public class NewsManagement2WebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
