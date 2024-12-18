@@ -78,6 +78,25 @@ namespace NewsManagement2.Entities.Newses
             _listableContentRelationRepository = listableContentRelationRepository;
             _newsDetailImageRepository = newsDetailImageRepository;
         }
+        public async Task<NewsDto> CreateAsync(CreateNewsDto createNewsDto)
+        {
+            var creatingNews = await CheckCreateInputBaseAsync(createNewsDto);
+
+            foreach (var imageId in creatingNews.DetailImageIds)
+            {
+                var images = _fileRepository.GetAsync(imageId.DetailImageId).Result;
+            }
+
+            var news = await _genericRepository.InsertAsync(creatingNews, autoSave: true);
+
+            await CreateCrossEntity(createNewsDto, news.Id);
+
+            var newsDto = _objectMapper.Map<News, NewsDto>(news);
+
+            await GetCrossEntityAsync(newsDto);
+
+            return newsDto;
+        }
         public async Task<PagedResultDto<NewsDto>> GetListAsync(GetListPagedAndSortedDto input)
         {
             var filteredList = await GetListFilterBaseAsync(input);
