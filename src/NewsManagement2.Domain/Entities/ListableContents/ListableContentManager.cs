@@ -36,5 +36,7 @@ namespace NewsManagement2.Entities.ListableContents
             _listableContentRepository = listableContentRepository;
 
         }
+
+
     }
 }
