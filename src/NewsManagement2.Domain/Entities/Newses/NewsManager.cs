@@ -6,6 +6,7 @@ using NewsManagement2.Entities.ListableContentRelations;
 using NewsManagement2.Entities.ListableContents;
 using NewsManagement2.Entities.Tags;
 using NewsManagement2.Entities.Videos;
+using NewsManagement2.EntityDtos.Newses;
 using NewsManagement2.EntityDtos.PagedAndSortedDto;
 using System;
 using System.Collections.Generic;
@@ -17,24 +18,29 @@ using Volo.Abp.ObjectMapping;
 
 namespace NewsManagement2.Entities.Newses
 {
+    /// <summary>
+    /// Haber içeriklerini yönetmek için kullanılan bir sınıf.
+    /// - Haberlerin oluşturulması, güncellenmesi, silinmesi, listelenmesi ve alınması gibi işlemleri gerçekleştirir.
+    /// - Haber detay görselleriyle birlikte ilişkisel varlıkları yönetir.
+    /// - Etiketler, şehirler, kategoriler ve diğer ilişkiler için çapraz bağlantıları düzenler.
+    /// </summary>
     public class NewsManager : ListableContentBaseManager<News, NewsDto, GetListPagedAndSortedDto, CreateNewsDto, UpdateNewsDto>
     {
-        private readonly IObjectMapper _objectMapper;
-        private readonly ITagRepository _tagRepository;
-        private readonly IFileRepository _fileRepository;
+       
         private readonly ICityRepository _cityRepository;
+        private readonly ITagRepository _tagRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly INewsRepository _newsRepository;
         private readonly IVideoRepository _videoRepository;
         private readonly IGalleryRepository _galleryRepository;
-        private readonly ICategoryRepository _categoryRepository;
         private readonly IRepository<NewsDetailImage> _newsDetailImageRepository;
-        private readonly IListableContentGenericRepository<News> _genericRepository;
-        private readonly IListableContentTagRepository _listableContentTagRepository;
-        private readonly IListableContentCityRepository _listableContentCityRepository;
-        private readonly IListableContentCategoryRepository _listableContentCategoryRepository;
         private readonly IListableContentRelationRepository _listableContentRelationRepository;
-
-
+        private readonly IListableContentTagRepository _listableContentTagRepository;
+        private readonly IListableContentCategoryRepository _listableContentCategoryRepository;
+        private readonly IListableContentGenericRepository<News> _genericRepository;
+        private readonly IListableContentCityRepository _listableContentCityRepository;
+        private readonly IObjectMapper _objectMapper;
+        private readonly IFileRepository _fileRepository;
         public NewsManager(
           IObjectMapper objectMapper,
           ITagRepository tagRepository,
