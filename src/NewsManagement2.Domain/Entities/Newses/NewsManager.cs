@@ -26,21 +26,22 @@ namespace NewsManagement2.Entities.Newses
     /// </summary>
     public class NewsManager : ListableContentBaseManager<News, NewsDto, GetListPagedAndSortedDto, CreateNewsDto, UpdateNewsDto>
     {
-       
-        private readonly ICityRepository _cityRepository;
+        private readonly IObjectMapper _objectMapper;
         private readonly ITagRepository _tagRepository;
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IFileRepository _fileRepository;
+        private readonly ICityRepository _cityRepository;
         private readonly INewsRepository _newsRepository;
         private readonly IVideoRepository _videoRepository;
         private readonly IGalleryRepository _galleryRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IRepository<NewsDetailImage> _newsDetailImageRepository;
-        private readonly IListableContentRelationRepository _listableContentRelationRepository;
-        private readonly IListableContentTagRepository _listableContentTagRepository;
-        private readonly IListableContentCategoryRepository _listableContentCategoryRepository;
         private readonly IListableContentGenericRepository<News> _genericRepository;
+        private readonly IListableContentTagRepository _listableContentTagRepository;
         private readonly IListableContentCityRepository _listableContentCityRepository;
-        private readonly IObjectMapper _objectMapper;
-        private readonly IFileRepository _fileRepository;
+        private readonly IListableContentCategoryRepository _listableContentCategoryRepository;
+        private readonly IListableContentRelationRepository _listableContentRelationRepository;
+
+
         public NewsManager(
           IObjectMapper objectMapper,
           ITagRepository tagRepository,
@@ -75,6 +76,17 @@ namespace NewsManagement2.Entities.Newses
             _listableContentCategoryRepository = listableContentCategoryRepository;
             _listableContentRelationRepository = listableContentRelationRepository;
             _newsDetailImageRepository = newsDetailImageRepository;
+        }
+        public async Task<NewsDto> GetByIdAsync(int id)
+        {
+            var news = await GetByIdBaseAsync(id);
+
+            var newsDetailImage = await _newsDetailImageRepository.GetListAsync(x => x.NewsId == id);
+            news.DetailImageId = newsDetailImage.Select(x => x.DetailImageId).ToList();
+
+            await GetCrossEntityAsync(news);
+
+            return news;
         }
         public async Task DeleteAsync(int id)
         {

@@ -31,14 +31,15 @@ namespace NewsManagement2.Entities.Videos
     public class VideoManager : ListableContentBaseManager<Video, VideoDto, GetListPagedAndSortedDto, CreateVideoDto, UpdateVideoDto>
     {
         private readonly IObjectMapper _objectMapper;
-        private readonly ITagRepository _tagRepository;
+        private readonly IListableContentGenericRepository<Video> _genericRepository;
         private readonly IFileRepository _fileRepository;
+        private readonly ITagRepository _tagRepository;
         private readonly ICityRepository _cityRepository;
         private readonly INewsRepository _newsRepository;
         private readonly IVideoRepository _videoRepository;
         private readonly IGalleryRepository _galleryRepository;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IListableContentGenericRepository<Video> _genericRepository;
+
         private readonly IListableContentTagRepository _listableContentTagRepository;
         private readonly IListableContentCityRepository _listableContentCityRepository;
         private readonly IListableContentCategoryRepository _listableContentCategoryRepository;
