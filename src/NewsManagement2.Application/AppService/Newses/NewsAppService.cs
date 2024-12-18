@@ -1,0 +1,31 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using NewsManagement2.Entities.Newses;
+using NewsManagement2.EntityDtos.Newses;
+using NewsManagement2.EntityDtos.PagedAndSortedDto;
+using NewsManagement2.Permissions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Repositories;
+
+namespace NewsManagement2.AppService.Newses
+{
+    [Authorize(NewsManagement2Permissions.Newses.Default)]
+    public class NewsAppService : CrudAppService<News, NewsDto, int, GetListPagedAndSortedDto, CreateNewsDto, UpdateNewsDto>, INewsAppService
+    {
+        private readonly NewsManager _newsManager;
+
+        public NewsAppService(IRepository<News, int> repository, NewsManager newsManager) : base(repository)
+        {
+            _newsManager = newsManager;
+        }
+
+        public Task DeleteHardAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
