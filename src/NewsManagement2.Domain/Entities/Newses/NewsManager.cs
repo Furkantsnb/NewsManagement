@@ -70,5 +70,10 @@ namespace NewsManagement2.Entities.Newses
             _listableContentRelationRepository = listableContentRelationRepository;
             _newsDetailImageRepository = newsDetailImageRepository;
         }
+
+        public async Task DeleteHardAsync(int id)
+        {
+            await CheckDeleteHardInputBaseAsync(id);
+        }
     }
 }
