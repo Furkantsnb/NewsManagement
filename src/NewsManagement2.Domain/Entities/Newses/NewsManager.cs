@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
 
@@ -76,6 +77,18 @@ namespace NewsManagement2.Entities.Newses
             _listableContentCategoryRepository = listableContentCategoryRepository;
             _listableContentRelationRepository = listableContentRelationRepository;
             _newsDetailImageRepository = newsDetailImageRepository;
+        }
+        public async Task<PagedResultDto<NewsDto>> GetListAsync(GetListPagedAndSortedDto input)
+        {
+            var filteredList = await GetListFilterBaseAsync(input);
+
+            foreach (var item in filteredList.Items.ToList())
+            {
+                var newsDetailImage = await _newsDetailImageRepository.GetListAsync(x => x.NewsId == item.Id);
+                item.DetailImageId = newsDetailImage.Select(x => x.DetailImageId).ToList();
+            }
+
+            return filteredList;
         }
         public async Task<NewsDto> GetByIdAsync(int id)
         {
