@@ -15,26 +15,19 @@ using Volo.Abp;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.Localization;
-using Volo.Abp.AspNetCore.Mvc.UI;
-using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
-using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity.Web;
-using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
-using Volo.Abp.PermissionManagement.Web;
 using Volo.Abp.SettingManagement.Web;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.TenantManagement.Web;
 using Volo.Abp.UI.Navigation.Urls;
-using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
 using EasyAbp.FileManagement.Web;
@@ -46,6 +39,8 @@ using EasyAbp.FileManagement.Files;
 using EasyAbp.FileManagement.Options;
 using Volo.Abp.BackgroundJobs.Hangfire;
 using Hangfire;
+using Hangfire.PostgreSql;
+using Volo.Abp.Hangfire;
 using NewsManagement2.Entities.BackgroundJobs;
 
 namespace NewsManagement2.Web;
@@ -62,6 +57,7 @@ namespace NewsManagement2.Web;
     typeof(AbpTenantManagementWebModule),
     typeof(AbpAspNetCoreSerilogModule),
      typeof(FileManagementWebModule),
+       typeof(AbpHangfireModule),
     typeof(AbpSwashbuckleModule)
     )]
 [DependsOn(typeof(AbpBlobStoringMinioModule))]
@@ -148,9 +144,19 @@ namespace NewsManagement2.Web;
         ConfigureNavigationServices();
         ConfigureAutoApiControllers();
         ConfigureSwaggerServices(context.Services);
-       
+        ConfigureHangfire(context, configuration);
+        context.Services.AddHangfireServer();
+
     }
 
+    private void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration)
+    {
+
+        context.Services.AddHangfire(config =>
+        {
+            config.UsePostgreSqlStorage(configuration.GetConnectionString("Default"));
+        });
+    }
     private void ConfigureAuthentication(ServiceConfigurationContext context)
     {
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
