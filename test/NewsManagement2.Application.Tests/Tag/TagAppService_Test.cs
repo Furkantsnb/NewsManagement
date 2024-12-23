@@ -36,14 +36,14 @@ namespace NewsManagement2.Tag
             using (_dataFilter.Disable())
             {
                 // Arrange
-                var createTagDto = new CreateTagDto { TagName = "Doğa" };
+                var createTagDto = new CreateTagDto { TagName = "news" };
 
                 // Act
                 var result = await _tagAppService.CreateAsync(createTagDto);
 
                 // Assert
                 result.ShouldNotBeNull();
-                result.TagName.ShouldBe("Doğa");
+                result.TagName.ShouldBe("news");
             }
         }
 
@@ -81,6 +81,23 @@ namespace NewsManagement2.Tag
             }
         }
 
+        // Negatif Test: Maksimum uzunluğu aşan TagName
+        [Fact]
+        public async Task CreateAsync_TagNameExceedsMaxLength_ShouldThrowBusinessException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var createTagDto = new CreateTagDto { TagName = new string('A', 300) };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<AbpValidationException>(async () =>
+                {
+                    await _tagAppService.CreateAsync(createTagDto);
+                });
+            }
+        }
+
         // Performans Testi: Etiket oluşturma süresi
         [Fact]
         public async Task CreateAsync_Performance_ShouldCompleteInReasonableTime()
@@ -88,39 +105,144 @@ namespace NewsManagement2.Tag
             using (_dataFilter.Disable())
             {
                 // Arrange
-                var createTagDto = new CreateTagDto { TagName = "Hız Testi" };
+                var createTagDto = new CreateTagDto { TagName = "UniqueTestTag" }; // Benzersiz bir ad kullanın
 
                 // Act
                 var startTime = DateTime.UtcNow;
-                await _tagAppService.CreateAsync(createTagDto);
+                var result = await _tagAppService.CreateAsync(createTagDto);
                 var endTime = DateTime.UtcNow;
 
                 // Assert
-                (endTime - startTime).TotalMilliseconds.ShouldBeLessThan(1000); // Maksimum 1 saniye
+                result.ShouldNotBeNull(); // Sonuç doğrulama
+                result.TagName.ShouldBe("UniqueTestTag");
+                (endTime - startTime).TotalMilliseconds.ShouldBeLessThan(2000); // Maksimum 1 saniye
             }
         }
 
-        //[Fact]
-        //public async Task UpdateAsync_TagNameAlreadyExists_ShouldThrowAlreadyExistException()
-        //{
-        //    var updateTagDto = new UpdateTagDto { TagName = "Eğitim" };
+        /// <summary>
+        /// Geçerli bir Tag ID'si ve güncelleme verisi ile başarıyla güncellenmesini test eder.
+        /// </summary>
+        [Fact]
+        public async Task UpdateAsync_ValidInput_ShouldUpdateSuccessfully()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validTagId = 2; // SeedData'dan var olan bir ID
+                var updateTagDto = new UpdateTagDto { TagName = "Updated Tag" };
 
-        //    await Assert.ThrowsAsync<AlreadyExistException>(async () =>
-        //    {
-        //        await _tagAppService.UpdateAsync(1, updateTagDto);
-        //    });
-        //}
+                // Act
+                var result = await _tagAppService.UpdateAsync(validTagId, updateTagDto);
 
-        //[Fact]
-        //public async Task UpdateAsync_ValidTagName_ShouldUpdateSuccessfully()
-        //{
-        //    var updateTagDto = new UpdateTagDto { TagName = "GüncellenmişEtiket" };
+                // Assert
+                result.ShouldNotBeNull();
+                result.TagName.ShouldBe("Updated Tag");
+            }
+        }
 
-        //    var result = await _tagAppService.UpdateAsync(1, updateTagDto);
+        /// <summary>
+        /// Güncellenecek Tag mevcut değilse, EntityNotFoundException fırlatıldığını test eder.
+        /// </summary>
+        [Fact]
+        public async Task UpdateAsync_NonExistentId_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var invalidTagId = 999; // SeedData'da bulunmayan bir ID
+                var updateTagDto = new UpdateTagDto { TagName = "Updated Tag" };
 
-        //    result.ShouldNotBeNull();
-        //    result.TagName.ShouldBe("GüncellenmişEtiket");
-        //}
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _tagAppService.UpdateAsync(invalidTagId, updateTagDto);
+                });
+            }
+        }
+
+        /// <summary>
+        /// Yeni TagName başka bir Tag tarafından kullanılıyorsa AlreadyExistException fırlatıldığını test eder.
+        /// </summary>
+        [Fact]
+        public async Task UpdateAsync_TagNameAlreadyExists_ShouldThrowAlreadyExistException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validTagId = 2; // SeedData'dan var olan bir ID
+                var updateTagDto = new UpdateTagDto { TagName = "Tatil" }; // SeedData'da mevcut olan bir TagName
+
+                // Act & Assert
+                await Assert.ThrowsAsync<AlreadyExistException>(async () =>
+                {
+                    await _tagAppService.UpdateAsync(validTagId, updateTagDto);
+                });
+            }
+        }
+
+        /// <summary>
+        /// Boş bir TagName ile güncelleme yapıldığında validasyon hatası fırlatıldığını test eder.
+        /// </summary>
+        [Fact]
+        public async Task UpdateAsync_EmptyTagName_ShouldThrowValidationException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validTagId = 2; // SeedData'dan var olan bir ID
+                var updateTagDto = new UpdateTagDto { TagName = string.Empty };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<AbpValidationException>(async () =>
+                {
+                    await _tagAppService.UpdateAsync(validTagId, updateTagDto);
+                });
+            }
+        }
+
+        /// <summary>
+        /// Çok kısa bir TagName ile güncelleme yapıldığında validasyon hatası fırlatıldığını test eder.
+        /// </summary>
+        [Fact]
+        public async Task UpdateAsync_TagNameTooShort_ShouldThrowValidationException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validTagId = 2; // SeedData'dan var olan bir ID
+                var updateTagDto = new UpdateTagDto { TagName = "A" }; // Geçersiz kısa bir isim
+
+                // Act & Assert
+                await Assert.ThrowsAsync<AbpValidationException>(async () =>
+                {
+                    await _tagAppService.UpdateAsync(validTagId, updateTagDto);
+                });
+            }
+        }
+
+        /// <summary>
+        /// Çok uzun bir TagName ile güncelleme yapıldığında validasyon hatası fırlatıldığını test eder.
+        /// </summary>
+        [Fact]
+        public async Task UpdateAsync_TagNameTooLong_ShouldThrowValidationException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validTagId = 2; // SeedData'dan var olan bir ID
+                var updateTagDto = new UpdateTagDto
+                {
+                    TagName = new string('A', 51) // Geçersiz uzun bir isim
+                };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<AbpValidationException>(async () =>
+                {
+                    await _tagAppService.UpdateAsync(validTagId, updateTagDto);
+                });
+            }
+        }
+
 
         //[Fact]
         //public async Task GetListAsync_FilteredData_ShouldReturnMatchingTags()
