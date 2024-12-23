@@ -266,17 +266,29 @@ namespace NewsManagement2.Tag
                 result.TotalCount.ShouldBeGreaterThan(0);
             }
         }
+        //Geçerli bir filtre kullanarak sonuçları sınırlandırır ve doğru filtrelenmiş sonuçları döndürdüğünü test eder.
+        [Fact]
+        public async Task GetListAsync_FilteredRequest_ShouldReturnFilteredTags()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    Filter = "Tatil",
+                    SkipCount = 0,
+                    MaxResultCount = 10,
+                    Sorting = nameof(TagDto.TagName)
+                };
 
-        //[Fact]
-        //public async Task GetListAsync_InvalidFilter_ShouldThrowNotFoundException()
-        //{
-        //    var input = new GetListPagedAndSortedDto { Filter = "Geçersiz" };
+                // Act
+                var result = await _tagAppService.GetListAsync(input);
 
-        //    await Assert.ThrowsAsync<NotFoundException>(async () =>
-        //    {
-        //        await _tagAppService.GetListAsync(input);
-        //    });
-        //}
+                // Assert
+                result.ShouldNotBeNull();
+                result.Items.ShouldContain(t => t.TagName == "Tatil");
+            }
+        }
 
         //[Fact]
         //public async Task DeleteAsync_InvalidId_ShouldThrowEntityNotFoundException()
