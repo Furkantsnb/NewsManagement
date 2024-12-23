@@ -31,7 +31,7 @@ using Volo.Abp.TenantManagement;
 
 namespace NewsManagement2
 {
-    internal class NewsManagementDataSeederContributor : IDataSeedContributor, ITransientDependency
+    public class NewsManagementDataSeederContributor : IDataSeedContributor, ITransientDependency
     {
         private readonly IGuidGenerator _guidGenerator;
         private readonly IRepository<Tag, int> _tagRepository;
