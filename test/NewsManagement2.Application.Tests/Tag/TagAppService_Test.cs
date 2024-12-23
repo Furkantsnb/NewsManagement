@@ -333,6 +333,30 @@ namespace NewsManagement2.Tag
                 });
             }
         }
+        //Filtre boş olduğunda tüm sonuçların döndüğünü doğrular.
+        [Fact]
+        public async Task GetListAsync_EmptyFilter_ShouldReturnAllTags()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    Filter = string.Empty,
+                    SkipCount = 0,
+                    MaxResultCount = 10,
+                    Sorting = nameof(TagDto.TagName)
+                };
+
+                // Act
+                var result = await _tagAppService.GetListAsync(input);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.Items.Count.ShouldBeGreaterThan(0);
+                result.TotalCount.ShouldBeGreaterThan(0);
+            }
+        }
 
         //[Fact]
         //public async Task DeleteAsync_InvalidId_ShouldThrowEntityNotFoundException()
