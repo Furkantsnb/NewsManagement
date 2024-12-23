@@ -11,4 +11,5 @@ namespace NewsManagement2
         public const string CollectionDefinitionName = "NewsManagementTestCollection";
 
     }
+
 }
