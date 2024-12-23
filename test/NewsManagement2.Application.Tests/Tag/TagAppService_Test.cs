@@ -289,6 +289,28 @@ namespace NewsManagement2.Tag
                 result.Items.ShouldContain(t => t.TagName == "Tatil");
             }
         }
+        //Hiçbir sonuç dönmeyen bir filtre kullanıldığında NotFoundException fırlatıldığını doğrular.
+        [Fact]
+        public async Task GetListAsync_InvalidFilter_ShouldThrowNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    Filter = "InvalidTagName",
+                    SkipCount = 0,
+                    MaxResultCount = 10,
+                    Sorting = nameof(TagDto.TagName)
+                };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<NotFoundException>(async () =>
+                {
+                    await _tagAppService.GetListAsync(input);
+                });
+            }
+        }
 
         //[Fact]
         //public async Task DeleteAsync_InvalidId_ShouldThrowEntityNotFoundException()
