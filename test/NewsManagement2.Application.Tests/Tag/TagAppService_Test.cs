@@ -312,6 +312,28 @@ namespace NewsManagement2.Tag
             }
         }
 
+        //SkipCount toplam sonuç sayısından büyük olduğunda BusinessException fırlatıldığını kontrol eder.
+        [Fact]
+        public async Task GetListAsync_SkipCountExceedsTotal_ShouldThrowBusinessException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    SkipCount = 100, // Daha büyük bir değer vererek hata tetiklenir
+                    MaxResultCount = 10,
+                    Sorting = nameof(TagDto.TagName)
+                };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<BusinessException>(async () =>
+                {
+                    await _tagAppService.GetListAsync(input);
+                });
+            }
+        }
+
         //[Fact]
         //public async Task DeleteAsync_InvalidId_ShouldThrowEntityNotFoundException()
         //{
