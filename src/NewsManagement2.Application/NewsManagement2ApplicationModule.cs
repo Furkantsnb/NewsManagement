@@ -7,6 +7,7 @@ using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+using Volo.Abp.FluentValidation;
 
 namespace NewsManagement2;
 
@@ -19,7 +20,8 @@ namespace NewsManagement2;
     typeof(AbpTenantManagementApplicationModule),
     typeof(AbpFeatureManagementApplicationModule),
     typeof(AbpSettingManagementApplicationModule),
-    typeof(FileManagementApplicationModule)
+    typeof(FileManagementApplicationModule),
+    typeof(AbpFluentValidationModule)
     )]
 public class NewsManagement2ApplicationModule : AbpModule
 {
