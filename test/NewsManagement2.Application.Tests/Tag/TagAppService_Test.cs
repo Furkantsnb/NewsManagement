@@ -243,16 +243,29 @@ namespace NewsManagement2.Tag
             }
         }
 
+        //Geçerli bir istekle tüm sonuçların döndüğünü doğrular.
+        [Fact]
+        public async Task GetListAsync_ValidRequest_ShouldReturnAllTags()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    SkipCount = 0,
+                    MaxResultCount = 10,
+                    Sorting = nameof(TagDto.TagName)
+                };
 
-        //[Fact]
-        //public async Task GetListAsync_FilteredData_ShouldReturnMatchingTags()
-        //{
-        //    var input = new GetListPagedAndSortedDto { Filter = "Tek" };
+                // Act
+                var result = await _tagAppService.GetListAsync(input);
 
-        //    var result = await _tagAppService.GetListAsync(input);
-
-        //    result.Items.ShouldContain(tag => tag.TagName == "Teknoloji");
-        //}
+                // Assert
+                result.ShouldNotBeNull();
+                result.Items.Count.ShouldBeGreaterThan(0);
+                result.TotalCount.ShouldBeGreaterThan(0);
+            }
+        }
 
         //[Fact]
         //public async Task GetListAsync_InvalidFilter_ShouldThrowNotFoundException()
