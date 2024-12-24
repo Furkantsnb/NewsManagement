@@ -392,6 +392,24 @@ namespace NewsManagement2.Tag
             }
         }
 
+        //Amaç: Daha önce silinmiş bir TagId ile silme işlemi sırasında EntityNotFoundException fırlatıldığını doğrulamak.
+        [Fact]
+        public async Task DeleteAsync_DeletedTagId_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                int tagId = 1; // SeedData'dan geçerli bir TagId
+                await _tagAppService.DeleteAsync(tagId); // İlk silme işlemi
+
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _tagAppService.DeleteAsync(tagId); // Tekrar silme işlemi
+                });
+            }
+        }
+
 
         //[Fact]
         //public async Task DeleteHardAsync_InvalidId_ShouldThrowEntityNotFoundException()
