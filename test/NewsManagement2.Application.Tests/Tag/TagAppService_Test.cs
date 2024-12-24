@@ -411,6 +411,24 @@ namespace NewsManagement2.Tag
         }
 
 
+        [Fact]
+        public async Task DeleteAsync_ValidTagId_ShouldNotExistInList()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                int validTagId = 1; // SeedData'dan bir TagId
+
+                // Act
+                await _tagAppService.DeleteAsync(validTagId);
+
+                // Assert
+                var allTags = await _tagAppService.GetListAsync(new GetListPagedAndSortedDto());
+                allTags.Items.Any(t => t.Id == validTagId).ShouldBeFalse();
+            }
+        }
+
+
         //[Fact]
         //public async Task DeleteHardAsync_InvalidId_ShouldThrowEntityNotFoundException()
         //{
