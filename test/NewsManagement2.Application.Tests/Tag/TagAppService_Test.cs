@@ -410,7 +410,7 @@ namespace NewsManagement2.Tag
             }
         }
 
-
+        //Amaç: Silinen bir TagId'nin GetListAsync çağrısında dönen listede yer almadığını doğrulamak.
         [Fact]
         public async Task DeleteAsync_ValidTagId_ShouldNotExistInList()
         {
@@ -429,24 +429,25 @@ namespace NewsManagement2.Tag
         }
 
 
-        //[Fact]
-        //public async Task DeleteHardAsync_InvalidId_ShouldThrowEntityNotFoundException()
-        //{
-        //    await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
-        //    {
-        //        await _tagAppService.DeleteHardAsync(9999);
-        //    });
-        //}
+        [Fact]
+        public async Task DeleteHardAsync_ValidTagId_ShouldDeleteSuccessfully()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validTagId = 1; // SeedData'dan mevcut bir TagId
 
-        //[Fact]
-        //public async Task DeleteHardAsync_ValidId_ShouldDeletePermanently()
-        //{
-        //    await _tagAppService.DeleteHardAsync(2);
+                // Act
+                await _tagAppService.DeleteHardAsync(validTagId);
 
-        //    await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
-        //    {
-        //        await _tagAppService.GetListAsync(new GetListPagedAndSortedDto { Filter = "Eğitim" });
-        //    });
-        //}
+                // Assert
+                var tag = await _tagAppService.GetListAsync(new GetListPagedAndSortedDto());
+                tag.Items.ShouldNotContain(t => t.Id == validTagId);
+            }
+        }
+
+
+
+
     }
 }
