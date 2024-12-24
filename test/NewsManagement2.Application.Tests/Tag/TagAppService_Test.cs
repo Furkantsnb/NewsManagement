@@ -376,6 +376,22 @@ namespace NewsManagement2.Tag
             }
         }
 
+        [Fact]
+        public async Task DeleteAsync_InvalidTagId_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                int invalidTagId = 9999; // SeedData'da bulunmayan bir TagId
+
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _tagAppService.DeleteAsync(invalidTagId);
+                });
+            }
+        }
+
 
         //[Fact]
         //public async Task DeleteHardAsync_InvalidId_ShouldThrowEntityNotFoundException()
