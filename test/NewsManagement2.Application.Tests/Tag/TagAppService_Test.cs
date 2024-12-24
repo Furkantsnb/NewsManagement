@@ -358,23 +358,24 @@ namespace NewsManagement2.Tag
             }
         }
 
-        //[Fact]
-        //public async Task DeleteAsync_InvalidId_ShouldThrowEntityNotFoundException()
-        //{
-        //    await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
-        //    {
-        //        await _tagAppService.DeleteAsync(9999);
-        //    });
-        //}
 
-        //[Fact]
-        //public async Task DeleteAsync_ValidId_ShouldDeleteSuccessfully()
-        //{
-        //    await _tagAppService.DeleteAsync(1);
+        [Fact]
+        public async Task DeleteAsync_ValidTagId_ShouldDeleteSuccessfully()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                int validTagId = 1; // SeedData'da mevcut bir TagId
 
-        //    var tag = await _tagAppService.GetListAsync(new GetListPagedAndSortedDto { Filter = "Tatil" });
-        //    tag.Items.ShouldNotContain(t => t.TagName == "Tatil");
-        //}
+                // Act
+                await _tagAppService.DeleteAsync(validTagId);
+
+                // Assert
+                var allTags = await _tagAppService.GetListAsync(new GetListPagedAndSortedDto());
+                allTags.Items.ShouldNotContain(t => t.Id == validTagId); // Silinen ID listeye dahil olmamalı
+            }
+        }
+
 
         //[Fact]
         //public async Task DeleteHardAsync_InvalidId_ShouldThrowEntityNotFoundException()
