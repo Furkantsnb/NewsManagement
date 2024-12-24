@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Data;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.ObjectMapping;
@@ -151,6 +152,121 @@ namespace NewsManagement2.Category
                 // Act
                 var startTime = DateTime.UtcNow;
                 var result = await _categoryAppService.CreateAsync(createCategoryDto);
+                var endTime = DateTime.UtcNow;
+
+                // Assert
+                result.ShouldNotBeNull();
+                (endTime - startTime).TotalMilliseconds.ShouldBeLessThan(1000); // Maksimum 1 saniye
+            }
+        }
+
+
+        /// <summary>
+        /// Başarılı bir güncelleme durumunu test eder.
+        /// </summary>
+        [Fact]
+        public async Task UpdateAsync_ValidCategory_ShouldUpdateSuccessfully()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var existingCategory = (await _categoryAppService.GetListAsync(new GetListPagedAndSortedDto { Filter = "Yazılım" })).Items.First();
+                var updateCategoryDto = new UpdateCategoryDto
+                {
+                    CategoryName = "Yazılım ve Teknoloji",
+                    ColorCode = "#654321",
+                    IsActive = true,
+                    ParentCategoryId = null,
+                    listableContentType = ListableContentType.Gallery
+                };
+
+                // Act
+                var result = await _categoryAppService.UpdateAsync(existingCategory.Id, updateCategoryDto);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.Id.ShouldBe(existingCategory.Id);
+                result.CategoryName.ShouldBe("Yazılım ve Teknoloji");
+            }
+        }
+
+        /// <summary>
+        /// Alt kategori için geçersiz bir üst kategori tipi kullanıldığında BusinessException bekler.
+        /// </summary>
+        [Fact]
+        public async Task UpdateAsync_InvalidSubCategoryContentType_ShouldThrowBusinessException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var parentCategory = (await _categoryAppService.GetListAsync(new GetListPagedAndSortedDto { Filter = "Yazılım" })).Items.First();
+                var existingSubCategory = (await _categoryAppService.GetListAsync(new GetListPagedAndSortedDto { Filter = "Yazılım Mühendisi" })).Items.First();
+
+                var updateCategoryDto = new UpdateCategoryDto
+                {
+                    CategoryName = "Mobil Uygulamalar",
+                    ColorCode = "#654321",
+                    IsActive = true,
+                    ParentCategoryId = parentCategory.Id,
+                    listableContentType = ListableContentType.Video // Çakışan içerik tipi
+                };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<BusinessException>(async () =>
+                {
+                    await _categoryAppService.UpdateAsync(existingSubCategory.Id, updateCategoryDto);
+                });
+            }
+        }
+
+        /// <summary>
+        /// Geçersiz bir kategori ID kullanıldığında EntityNotFoundException bekler.
+        /// </summary>
+        [Fact]
+        public async Task UpdateAsync_InvalidCategoryId_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var updateCategoryDto = new UpdateCategoryDto
+                {
+                    CategoryName = "Geçersiz Kategori",
+                    ColorCode = "#654321",
+                    IsActive = true,
+                    ParentCategoryId = null,
+                    listableContentType = ListableContentType.News
+                };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _categoryAppService.UpdateAsync(9999, updateCategoryDto); // Geçersiz ID
+                });
+            }
+        }
+
+        /// <summary>
+        /// Performans testi: Güncelleme işlemi makul bir sürede tamamlanmalıdır.
+        /// </summary>
+        [Fact]
+        public async Task UpdateAsync_Performance_ShouldCompleteInReasonableTime()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var existingCategory = (await _categoryAppService.GetListAsync(new GetListPagedAndSortedDto { Filter = "Yazılım" })).Items.First();
+                var updateCategoryDto = new UpdateCategoryDto
+                {
+                    CategoryName = "Performans Testi Kategorisi",
+                    ColorCode = "#abcdef",
+                    IsActive = true,
+                    ParentCategoryId = null,
+                    listableContentType = ListableContentType.News
+                };
+
+                // Act
+                var startTime = DateTime.UtcNow;
+                var result = await _categoryAppService.UpdateAsync(existingCategory.Id, updateCategoryDto);
                 var endTime = DateTime.UtcNow;
 
                 // Assert
