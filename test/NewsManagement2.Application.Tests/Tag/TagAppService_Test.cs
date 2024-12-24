@@ -446,8 +446,77 @@ namespace NewsManagement2.Tag
             }
         }
 
+        //Geçersiz bir TagId ile işlem yapıldığında hata fırlatılmalı
+        [Fact]
+        public async Task DeleteHardAsync_InvalidTagId_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var invalidTagId = 999; // Geçersiz bir TagId
 
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _tagAppService.DeleteHardAsync(invalidTagId);
+                });
+            }
+        }
 
+        //Daha önce zaten silinmiş bir etiketi tekrar silmeye çalıştığında hata alınmalı
+        [Fact]
+        public async Task DeleteHardAsync_AlreadyDeletedTag_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var tagId = 2; // SeedData'dan bir mevcut TagId
+                await _tagAppService.DeleteHardAsync(tagId); // İlk silme işlemi
+
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _tagAppService.DeleteHardAsync(tagId); // Tekrar silme
+                });
+            }
+        }
+
+        //Silinen bir etiket GetListAsync ile sonuçlar arasında bulunmamalı
+        [Fact]
+        public async Task DeleteHardAsync_TagShouldNotAppearInGetList()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var tagId = 3; // SeedData'dan bir mevcut TagId
+                await _tagAppService.DeleteHardAsync(tagId);
+
+                // Act
+                var result = await _tagAppService.GetListAsync(new GetListPagedAndSortedDto());
+
+                // Assert
+                result.Items.ShouldNotContain(t => t.Id == tagId);
+            }
+        }
+
+        //Kalıcı olarak silme performansı kontrol edilmeli
+        [Fact]
+        public async Task DeleteHardAsync_Performance_ShouldCompleteInReasonableTime()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var tagId = 4; // SeedData'dan bir mevcut TagId
+
+                // Act
+                var startTime = DateTime.UtcNow;
+                await _tagAppService.DeleteHardAsync(tagId);
+                var endTime = DateTime.UtcNow;
+
+                // Assert
+                (endTime - startTime).TotalMilliseconds.ShouldBeLessThan(500); // Maksimum 500ms
+            }
+        }
 
     }
 }
