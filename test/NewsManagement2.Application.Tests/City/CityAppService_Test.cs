@@ -393,7 +393,7 @@ namespace NewsManagement2.City
                 await Assert.ThrowsAsync<EntityNotFoundException>(() => _cityAppService.GetAsync(existingCity.Id));
             }
         }
-
+        
         [Fact]
         public async Task GetAsync_ValidCity_ShouldReturnCity()
         {
@@ -412,6 +412,101 @@ namespace NewsManagement2.City
             }
         }
 
-        //
+        //Geçerli bir istekle tüm sonuçların döndüğünü doğrular.
+        [Fact]
+        public async Task GetListAsync_ValidRequest_ShouldReturnAllCities()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    SkipCount = 0,
+                    MaxResultCount = 10,
+                    Sorting = nameof(CityDto.CityName)
+                };
+
+                // Act
+                var result = await _cityAppService.GetListAsync(input);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.Items.Count.ShouldBeGreaterThan(0);
+                result.TotalCount.ShouldBeGreaterThan(0);
+            }
+        }
+
+
+        //Hiçbir sonuç dönmeyen bir filtre kullanıldığında NotFoundException fırlatıldığını doğrular.
+        [Fact]
+        public async Task GetListAsync_InvalidFilter_ShouldThrowNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    Filter = "InvalidCityName", // Geçersiz bir filtre
+                    SkipCount = 0,
+                    MaxResultCount = 10,
+                    Sorting = nameof(CityDto.CityName)
+                };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<NotFoundException>(async () =>
+                {
+                    await _cityAppService.GetListAsync(input);
+                });
+            }
+        }
+
+        //SkipCount toplam sonuç sayısından büyük olduğunda BusinessException fırlatıldığını kontrol eder.
+
+        [Fact]
+        public async Task GetListAsync_SkipCountExceedsTotal_ShouldThrowBusinessException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    SkipCount = 100, // Daha büyük bir değer vererek hata tetiklenir
+                    MaxResultCount = 10,
+                    Sorting = nameof(CityDto.CityName)
+                };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<BusinessException>(async () =>
+                {
+                    await _cityAppService.GetListAsync(input);
+                });
+            }
+        }
+
+
+        //Filtre boş olduğunda tüm sonuçların döndüğünü doğrular.
+        [Fact]
+        public async Task GetListAsync_EmptyFilter_ShouldReturnAllCities()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    Filter = string.Empty, // Filtre boş
+                    SkipCount = 0,
+                    MaxResultCount = 10,
+                    Sorting = nameof(CityDto.CityName)
+                };
+
+                // Act
+                var result = await _cityAppService.GetListAsync(input);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.Items.Count.ShouldBeGreaterThan(0);
+                result.TotalCount.ShouldBeGreaterThan(0);
+            }
+        }
     }
 }
