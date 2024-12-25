@@ -308,6 +308,74 @@ namespace NewsManagement2.City
                 updatedCity.CityName.ShouldBe("Updated City");
             }
         }
+        // Geçerli bir şehir ID'siyle şehri başarıyla siler.
+        [Fact]
+        public async Task DeleteAsync_ValidCityId_ShouldDeleteSuccessfully()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                int validCityId = 1; // SeedData'da mevcut bir CityId
+
+                // Act
+                await _cityAppService.DeleteAsync(validCityId);
+
+                // Assert
+                var allCities = await _cityAppService.GetListAsync(new GetListPagedAndSortedDto());
+                allCities.Items.ShouldNotContain(c => c.Id == validCityId); // Silinen ID listeye dahil olmamalı
+            }
+        }
+        //Geçersiz bir şehir ID'siyle silme işlemi yapıldığında EntityNotFoundException fırlatılır.
+        [Fact]
+        public async Task DeleteAsync_InvalidCityId_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                int invalidCityId = 9999; // SeedData'da bulunmayan bir CityId
+
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _cityAppService.DeleteAsync(invalidCityId);
+                });
+            }
+        }
+        //Daha önce silinmiş bir şehir ID'siyle tekrar silme işlemi yapıldığında EntityNotFoundException fırlatılır.
+        [Fact]
+        public async Task DeleteAsync_DeletedCityId_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                int cityId = 1; // SeedData'dan geçerli bir CityId
+                await _cityAppService.DeleteAsync(cityId); // İlk silme işlemi
+
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _cityAppService.DeleteAsync(cityId); // Tekrar silme işlemi
+                });
+            }
+        }
+
+        //Silinen bir şehrin GetListAsync çağrısında dönen listede yer almadığını doğrular.
+        [Fact]
+        public async Task DeleteAsync_ValidCityId_ShouldNotExistInList()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                int validCityId = 1; // SeedData'dan bir CityId
+
+                // Act
+                await _cityAppService.DeleteAsync(validCityId);
+
+                // Assert
+                var allCities = await _cityAppService.GetListAsync(new GetListPagedAndSortedDto());
+                allCities.Items.Any(c => c.Id == validCityId).ShouldBeFalse();
+            }
+        }
 
 
         [Fact]
@@ -344,6 +412,6 @@ namespace NewsManagement2.City
             }
         }
 
-
+        //
     }
 }
