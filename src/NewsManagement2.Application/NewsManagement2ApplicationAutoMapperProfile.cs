@@ -2,12 +2,15 @@
 using NewsManagement2.Entities.Categories;
 using NewsManagement2.Entities.Cities;
 using NewsManagement2.Entities.Galleries;
+using NewsManagement2.Entities.ListableContentRelations;
+using NewsManagement2.Entities.ListableContents;
 using NewsManagement2.Entities.Newses;
 using NewsManagement2.Entities.Tags;
 using NewsManagement2.Entities.Videos;
 using NewsManagement2.EntityDtos.CategoryDtos;
 using NewsManagement2.EntityDtos.CityDtos;
 using NewsManagement2.EntityDtos.GalleryDtos;
+using NewsManagement2.EntityDtos.ListableContentDtos;
 using NewsManagement2.EntityDtos.Newses;
 using NewsManagement2.EntityDtos.TagDtos;
 using NewsManagement2.EntityDtos.VideoDtos;
@@ -66,6 +69,51 @@ public class NewsManagement2ApplicationAutoMapperProfile : Profile
         CreateMap<NewsDetailImageDto, NewsDetailImage>().ReverseMap();
         CreateMap<CreateNewsDto, UpdateNewsDto>().ReverseMap();
         #endregion
+
+        #region Gallery
+        CreateMap<Gallery, GalleryDto>().ReverseMap();
+        CreateMap<UpdateGalleryDto, Gallery>().ReverseMap();
+        CreateMap<CreateGalleryDto, Gallery>().ReverseMap();
+        CreateMap<GalleryImage, GalleryImageDto>().ReverseMap();
+
+        CreateMap<CreateGalleryDto, UpdateGalleryDto>().ReverseMap();
+        #endregion
+
+        #region Video
+        CreateMap<Video, VideoDto>().ReverseMap();
+        CreateMap<UpdateVideoDto, Video>().ReverseMap();
+        CreateMap<CreateVideoDto, Video>().ReverseMap();
+        CreateMap<CreateVideoDto, UpdateVideoDto>().ReverseMap();
+        #endregion
+
+        #region ListableContent
+        CreateMap<ListableContent, ListableContentDto>().ReverseMap();
+        CreateMap<UpdateListableContentDto, ListableContent>().ReverseMap();
+        CreateMap<CreateListableContentDto, ListableContent>().ReverseMap();
+
+        CreateMap<ListableContentCategory, ReturnCategoryDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.CategoryId))
+            .ForMember(dest => dest.IsPrimary, opt => opt.MapFrom(src => src.IsPrimary))
+            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+            .ForMember(dest => dest.ColorCode, opt => opt.MapFrom(src => src.Category.ColorCode))
+            .ForMember(dest => dest.ParentCategoryId, opt => opt.MapFrom(src => src.Category.ParentCategoryId));
+
+        CreateMap<ListableContentTag, ReturnTagDto>()
+          .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TagId))
+          .ForMember(dest => dest.TagName, opt => opt.MapFrom(src => src.Tag.TagName));
+
+        CreateMap<ListableContentCity, ReturnCityDto>()
+          .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.CityId))
+          .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.City.CityName))
+          .ForMember(dest => dest.CityCode, opt => opt.MapFrom(src => src.City.CityCode));
+
+        CreateMap<ListableContentRelation, ReturnListableContentRelationDto>()
+          .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RelatedListableContent.Id))
+          .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.RelatedListableContent.Title))
+          .ForMember(dest => dest.ViewsCount, opt => opt.MapFrom(src => src.RelatedListableContent.ViewsCount))
+          .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.RelatedListableContent.Status));
+        #endregion
+
     }
 
 }

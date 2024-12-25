@@ -17,9 +17,9 @@ namespace NewsManagement2.AppService.ListableContents
             _listableContentManager = listableContentManager;
         }
 
-        public Task<ListableContentDto> GetByIdAsync(int id)
+        public async Task<ListableContentDto> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _listableContentManager.GetByIdAsync(id);
         }
     }
 }
