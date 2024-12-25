@@ -19,6 +19,7 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.ObjectMapping;
 using Volo.Abp.Uow;
+using Volo.Abp.Validation;
 using Xunit;
 
 namespace NewsManagement2.Category
@@ -274,5 +275,129 @@ namespace NewsManagement2.Category
                 (endTime - startTime).TotalMilliseconds.ShouldBeLessThan(1000); // Maksimum 1 saniye
             }
         }
+
+        [Fact]
+        public async Task GetListAsync_ShouldReturnPagedResults_WhenCalledWithValidInput()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    MaxResultCount = 2,
+                    SkipCount = 0,
+                    Sorting = "CategoryName",
+                    Filter = null
+                };
+
+                // Act
+                var result = await _categoryAppService.GetListAsync(input);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.Items.Count.ShouldBeLessThanOrEqualTo(2); // Sayfalama sınırı 2
+                result.TotalCount.ShouldBeGreaterThan(0); // En az bir kayıt olmalı
+            }
+        }
+
+        [Fact]
+        public async Task GetListAsync_ShouldFilterResults_ByCategoryName()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    MaxResultCount = 10,
+                    SkipCount = 0,
+                    Sorting = "CategoryName",
+                    Filter = "Yazılım" // Filtre
+                };
+
+                // Act
+                var result = await _categoryAppService.GetListAsync(input);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.Items.ShouldNotBeEmpty();
+                result.Items.All(c => c.CategoryName.Contains("Yazılım")).ShouldBeTrue();
+            }
+        }
+
+        [Fact]
+        public async Task GetListAsync_ShouldSortResults_ByCategoryName()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    MaxResultCount = 10,
+                    SkipCount = 0,
+                    Sorting = "CategoryName" // İsme göre sıralama
+                };
+
+                // Act
+                var result = await _categoryAppService.GetListAsync(input);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.Items.ShouldNotBeEmpty();
+
+                // İsme göre sıralı olduğunu doğrula
+                var sorted = result.Items.OrderBy(c => c.CategoryName).ToList();
+                result.Items.ShouldBe(sorted);
+            }
+        }
+
+    
+
+        [Fact]
+        public async Task GetListAsync_Performance_ShouldCompleteInReasonableTime()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    MaxResultCount = 50,
+                    SkipCount = 0,
+                    Sorting = "CategoryName",
+                    Filter = null
+                };
+
+                // Act
+                var startTime = DateTime.UtcNow;
+                var result = await _categoryAppService.GetListAsync(input);
+                var endTime = DateTime.UtcNow;
+
+                // Assert
+                result.ShouldNotBeNull();
+                (endTime - startTime).TotalMilliseconds.ShouldBeLessThan(1000); // Maksimum 1 saniye
+            }
+        }
+
+        [Fact]
+        public async Task GetListAsync_ShouldHandleInvalidInput_Gracefully()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var input = new GetListPagedAndSortedDto
+                {
+                    MaxResultCount = -1, // Geçersiz
+                    SkipCount = -1, // Geçersiz
+                    Sorting = null,
+                    Filter = null
+                };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<AbpValidationException>(async () =>
+                {
+                    await _categoryAppService.GetListAsync(input);
+                });
+            }
+        }
+
     }
 }
