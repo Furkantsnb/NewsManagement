@@ -150,7 +150,164 @@ namespace NewsManagement2.City
             (endTime - startTime).TotalMilliseconds.ShouldBeLessThan(2000); // Maksimum 2 saniye
         }
 
+        //Pozitif Test: Geçerli bir şehir adı ile güncelleme
+        [Fact]
+        public async Task UpdateAsync_ValidCityName_ShouldUpdateSuccessfully()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validCityId = 2; // SeedData'dan var olan bir şehir ID'si
+                var updateCityDto = new UpdateCityDto { CityName = "Updated City", CityCode = 35 };
 
+                // Act
+                var result = await _cityAppService.UpdateAsync(validCityId, updateCityDto);
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.CityName.ShouldBe("Updated City");
+            }
+        }
+
+        //Negatif Test: Güncellenecek şehir mevcut değilse EntityNotFoundException fırlatılması
+        [Fact]
+        public async Task UpdateAsync_NonExistentCity_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var invalidCityId = 999; // SeedData'da olmayan bir ID
+                var updateCityDto = new UpdateCityDto { CityName = "Updated City", CityCode = 34 };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _cityAppService.UpdateAsync(invalidCityId, updateCityDto);
+                });
+            }
+        }
+
+        //Negatif Test: Aynı isimi başka bir şehirde kullanmak
+        [Fact]
+        public async Task UpdateAsync_CityNameAlreadyExists_ShouldThrowAlreadyExistException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validCityId = 2; // SeedData'dan var olan bir ID
+                var updateCityDto = new UpdateCityDto { CityName = "İstanbul", CityCode =34 }; // SeedData'da mevcut olan bir şehir adı
+
+                // Act & Assert
+                await Assert.ThrowsAsync<AlreadyExistException>(async () =>
+                {
+                    await _cityAppService.UpdateAsync(validCityId, updateCityDto);
+                });
+            }
+        }
+
+        //Negatif Test: Boş şehir adı ile güncelleme
+        [Fact]
+        public async Task UpdateAsync_EmptyCityName_ShouldThrowValidationException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validCityId = 2; // SeedData'dan var olan bir ID
+                var updateCityDto = new UpdateCityDto { CityName = string.Empty };
+
+                // Act & Assert
+                await Assert.ThrowsAsync<AbpValidationException>(async () =>
+                {
+                    await _cityAppService.UpdateAsync(validCityId, updateCityDto);
+                });
+            }
+        }
+        //Negatif Test: Çok kısa bir şehir adı ile güncelleme
+        [Fact]
+        public async Task UpdateAsync_CityNameTooShort_ShouldThrowValidationException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validCityId = 2; // SeedData'dan var olan bir ID
+                var updateCityDto = new UpdateCityDto { CityName = "A" }; // Geçersiz kısa bir şehir adı
+
+                // Act & Assert
+                await Assert.ThrowsAsync<AbpValidationException>(async () =>
+                {
+                    await _cityAppService.UpdateAsync(validCityId, updateCityDto);
+                });
+            }
+        }
+
+        //Negatif Test: Çok uzun bir şehir adı ile güncelleme
+        [Fact]
+        public async Task UpdateAsync_CityNameTooLong_ShouldThrowValidationException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validCityId = 2; // SeedData'dan var olan bir ID
+                var updateCityDto = new UpdateCityDto { CityName = new string('A', 300) }; // Geçersiz uzun bir şehir adı
+
+                // Act & Assert
+                await Assert.ThrowsAsync<AbpValidationException>(async () =>
+                {
+                    await _cityAppService.UpdateAsync(validCityId, updateCityDto);
+                });
+            }
+        }
+
+        //Performans Testi: Şehir adı güncelleme süresi
+        [Fact]
+        
+        public async Task UpdateAsync_Performance_ShouldCompleteInReasonableTime()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validCityId = 1; // SeedData'dan var olan bir ID
+                var updateCityDto = new UpdateCityDto
+                {
+                    CityName = "NewCity",
+                    CityCode = 27 // Geçerli bir şehir kodu
+                };
+
+                // Act
+                var startTime = DateTime.UtcNow;
+                var result = await _cityAppService.UpdateAsync(validCityId, updateCityDto);
+                var endTime = DateTime.UtcNow;
+
+                // Assert
+                result.ShouldNotBeNull();
+                result.CityName.ShouldBe("NewCity");
+                (endTime - startTime).TotalMilliseconds.ShouldBeLessThan(2000); // Maksimum 2 saniye
+            }
+        }
+
+
+        //Veritabanında güncellenen şehir adının doğru olduğunun doğrulanması
+        [Fact]
+        public async Task UpdateAsync_ShouldPersistCityNameInDatabase()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var validCityId = 2; // SeedData'dan var olan bir ID
+                var updateCityDto = new UpdateCityDto
+                {
+                    CityName = "Updated City",
+                    CityCode = 45 // Geçerli bir şehir kodu
+                };
+
+                // Act
+                await _cityAppService.UpdateAsync(validCityId, updateCityDto);
+
+                // Assert
+                var updatedCity = await _cityAppService.GetAsync(validCityId);
+                updatedCity.CityName.ShouldBe("Updated City");
+            }
+        }
 
 
         [Fact]
