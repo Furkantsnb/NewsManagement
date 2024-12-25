@@ -350,7 +350,7 @@ namespace NewsManagement2.Category
             }
         }
 
-    
+
 
         [Fact]
         public async Task GetListAsync_Performance_ShouldCompleteInReasonableTime()
@@ -399,5 +399,94 @@ namespace NewsManagement2.Category
             }
         }
 
+        [Fact]
+        public async Task DeleteAsync_ValidId_ShouldSoftDeleteSuccessfully()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var existingCategory = (await _categoryAppService.GetListAsync(new GetListPagedAndSortedDto { Filter = "Yazılım" })).Items.First();
+
+                // Act
+                await _categoryAppService.DeleteAsync(existingCategory.Id);
+
+                // Assert
+                var deletedCategory = (await _categoryAppService.GetListAsync(new GetListPagedAndSortedDto { Filter = "Yazılım" })).Items
+                    .FirstOrDefault(c => c.Id == existingCategory.Id);
+
+                deletedCategory.ShouldBeNull(); // Soft-delete edilen kayıt artık listelenmemeli
+            }
+        }
+
+        [Fact]
+        public async Task DeleteAsync_InvalidId_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var invalidId = 9999; // Geçersiz ID
+
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _categoryAppService.DeleteAsync(invalidId);
+                });
+            }
+        }
+
+    
+
+
+
+
+
+        [Fact]
+        public async Task HardDeleteAsync_InvalidId_ShouldThrowEntityNotFoundException()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var invalidId = 9999; // Geçersiz ID
+
+                // Act & Assert
+                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+                {
+                    await _categoryAppService.DeleteHardAsync(invalidId);
+                });
+            }
+        }
+
+        [Fact]
+        public async Task HardDeleteAsync_Performance_ShouldCompleteInReasonableTime()
+        {
+            using (_dataFilter.Disable())
+            {
+                // Arrange
+                var existingCategory = (await _categoryAppService.GetListAsync(new GetListPagedAndSortedDto { Filter = "Yazılım" })).Items.First();
+
+                // Act
+                var startTime = DateTime.UtcNow;
+                await _categoryAppService.DeleteHardAsync(existingCategory.Id);
+                var endTime = DateTime.UtcNow;
+
+                // Assert
+                (endTime - startTime).TotalMilliseconds.ShouldBeLessThan(1000); // Maksimum 1 saniye
+            }
+        }
+
+
+
+        [Fact]
+        public async Task GetSubCategoriesById_IdValid_ReturnEntity()
+        {
+            using (_dataFilter.Disable())
+            {
+                var id = 6;
+                var categories = await _categoryAppService.GetSubCategoriesById(id);
+
+                Assert.NotNull(categories);
+                Assert.Equal(2, categories.Count);
+            }
+        }
     }
 }
