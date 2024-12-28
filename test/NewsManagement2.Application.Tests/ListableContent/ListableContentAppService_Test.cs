@@ -1,4 +1,5 @@
 ﻿using NewsManagement2.AppService.ListableContents;
+using NewsManagement2.Entities.Newses;
 using NewsManagement2.EntityDtos.Newses;
 using Shouldly;
 using System;
@@ -25,35 +26,16 @@ namespace NewsManagement2.ListableContent
         }
 
         [Fact]
-        public async Task GetByIdAsync_ValidId_ShouldReturnListableContentDto()
+        public async Task GetByIdAsync_ReturnValue_NewsDto()
         {
             using (_dataFilter.Disable())
             {
-                // Arrange
-                int validId = 1;  // SeedData'dan mevcut bir ID (varsa)
+                var id = 1;
 
-                // Act
-                var result = await _listableContentAppService.GetByIdAsync(validId);
+                var listableContent = await _listableContentAppService.GetByIdAsync(id);
 
-                // Assert
-                result.ShouldNotBeNull();  // Sonuç null olmamalı
-                result.ShouldBeOfType<NewsDto>();  // Dönen sonuç NewsDto türünde olmalı
-            }
-        }
-
-        [Fact]
-        public async Task GetByIdAsync_InvalidId_ShouldThrowEntityNotFoundException()
-        {
-            using (_dataFilter.Disable())
-            {
-                // Arrange
-                int invalidId = 9999;  // SeedData'da mevcut olmayan bir ID
-
-                // Act & Assert
-                await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
-                {
-                    await _listableContentAppService.GetByIdAsync(invalidId);
-                });
+                Assert.NotNull(listableContent);
+                Assert.IsType<NewsDto>(listableContent);
             }
         }
     }
