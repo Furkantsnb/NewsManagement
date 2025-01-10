@@ -569,7 +569,7 @@ namespace NewsManagement2
             var filesHashString = _fileContentHashProvider.GetHashString(byteSizeOfFiles);
 
             var filesConfiguration = _configurationProvider.Get(containerName);
-            var filesBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, filesName, null, filesMimeType, filesConfiguration.AbpBlobDirectorySeparator);
+            //var filesBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, filesName, null, filesMimeType, filesConfiguration.AbpBlobDirectorySeparator);
 
             var files = new EasyAbp.FileManagement.Files.File(
               id: uploadImageId,
@@ -582,7 +582,7 @@ namespace NewsManagement2
               subFilesQuantity: 0,
               byteSize: byteSizeOfFiles.Length,
               hash: filesHashString,
-              blobName: filesBlobName,
+              blobName: "filesBlobName",
               ownerUserId: null
             );
 
@@ -600,7 +600,7 @@ namespace NewsManagement2
             var uploadHashString = _fileContentHashProvider.GetHashString(byteSizeOfUpload);
 
             var uploadConfiguration = _configurationProvider.Get(containerName);
-            var uploadBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, uploadName, null, uploadMimeType, uploadConfiguration.AbpBlobDirectorySeparator);
+            //var uploadBlobName = await _fileBlobNameGenerator.CreateAsync(FileType.RegularFile, uploadName, null, uploadMimeType, uploadConfiguration.AbpBlobDirectorySeparator);
 
             var upload = new EasyAbp.FileManagement.Files.File(
               id: filesImageId,
@@ -613,7 +613,7 @@ namespace NewsManagement2
               subFilesQuantity: 0,
               byteSize: byteSizeOfUpload.Length,
               hash: uploadHashString,
-              blobName: uploadBlobName,
+              blobName: "uploadBlobName",
               ownerUserId: null
             );
 

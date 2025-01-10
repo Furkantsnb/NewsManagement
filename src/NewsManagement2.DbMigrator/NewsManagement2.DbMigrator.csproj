@@ -31,6 +31,8 @@
 
   <ItemGroup>
     <PackageReference Include="Volo.Abp.Autofac" Version="7.2.1" />
+    <PackageReference Include="Volo.Abp.BlobStoring.Minio" Version="7.2.1" />
+    <ProjectReference Include="..\..\..\..\ModuleEkleme\ModuleEkleme\FileManagement\host\EasyAbp.FileManagement.Web.Unified\EasyAbp.FileManagement.Web.Unified.csproj" />
     <ProjectReference Include="..\NewsManagement2.Application.Contracts\NewsManagement2.Application.Contracts.csproj" />
     <ProjectReference Include="..\NewsManagement2.EntityFrameworkCore\NewsManagement2.EntityFrameworkCore.csproj" />
   </ItemGroup>

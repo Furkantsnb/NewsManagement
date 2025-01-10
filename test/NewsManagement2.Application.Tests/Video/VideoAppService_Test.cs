@@ -70,7 +70,7 @@ namespace NewsManagement2.Video
                     CityIds = new List<int> { 2 }, // Seed data'ya uygun bir City ID
                     ListableContentCategoryDtos = new List<ListableContentCategoryDto>
                     {
-                        new() { CategoryId = 1, IsPrimary = true } // Seed data'ya uygun bir Category ID
+                        new() { CategoryId = 2, IsPrimary = true } // Seed data'ya uygun bir Category ID
                     },
                     Status = StatusType.Draft,
                     VideoType = VideoType.Video,
@@ -99,7 +99,7 @@ namespace NewsManagement2.Video
                     CityIds = new List<int> { 2 }, // Seed data'ya uygun bir City ID
                     ListableContentCategoryDtos = new List<ListableContentCategoryDto>
                     {
-                        new() { CategoryId = 1, IsPrimary = true } // Seed data'ya uygun bir Category ID
+                        new() { CategoryId = 2, IsPrimary = true } // Seed data'ya uygun bir Category ID
                     },
                     Status = StatusType.Published,
                     VideoType = VideoType.Link,
