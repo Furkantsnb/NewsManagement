@@ -30,6 +30,7 @@ using Volo.Abp.MultiTenancy;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.TenantManagement;
 
+
 namespace NewsManagement2
 {
     public class NewsManagementDataSeederContributor : IDataSeedContributor, ITransientDependency
@@ -169,7 +170,7 @@ namespace NewsManagement2
                     await SeedTagAsync(youngTenant.Id);
                     await SeedCityAsync(youngTenant.Id);
                     await SeedCategoryAsync(youngTenant.Id);
-                   // await SeedFileAsync(youngTenant.Id, filesImageId, uploadImageId);
+                    await SeedFileAsync(youngTenant.Id, filesImageId, uploadImageId);
                     await SeedNewsAsync(youngTenant.Id, filesImageId, uploadImageId);
                     await SeedVideoAsync(youngTenant.Id, filesImageId, uploadImageId);
                     await SeedGalleryAsync(youngTenant.Id, filesImageId, uploadImageId);
@@ -542,6 +543,9 @@ namespace NewsManagement2
 
         }
         #endregion
+
+
+
         #region Files
         private async Task SeedFileAsync(Guid? tenantId, Guid filesImageId, Guid uploadImageId)
         {
